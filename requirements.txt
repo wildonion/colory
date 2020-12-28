@@ -1,0 +1,4 @@
+matplotlib
+numpy
+plotly==4.14.1
+networkx
