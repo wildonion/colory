@@ -19,7 +19,7 @@ class gene:
 class chromosome:
 	def __init__(self, genes):
 		self.genes_objects = np.array([gene(g) for g in genes]) # list of all genes objects
-		self.genes = genes
+		self.genes = genes # list of genes value
 
 	def fitness(self):
 		pass
@@ -40,13 +40,15 @@ class population:
 		else: self.pop = [chromosome(c) for c in chromosomes]
 	
 	def __init_pop(self):
-		pass
+		for i in range(self.amount):
+			c = None # build each chromosome with at least self.color genes
+			self.pop.append(chromosome(c))
 
 	def fitness_score(self):
 		scores = [] # scores
 		for chromosome in self.pop:
 			scores.append(chromosome.fitness())
-		scores, population = np.array(scores), np.array([c.genes for c in self.pop])
+		scores, population = np.array(scores), np.array([c.genes for c in self.pop]) # list of all chromosomes' scores, population of all chromosomes with their genes
 		indices = np.argsort(scores) # return the indices of sorted scores in ascending order - used in rank selection
 		descending_scores = scores[indices][::-1] # sorted scores in descending order
 		descending_population_of_scores = population[indices, :][::-1] # sorted population of chromosomes scores in descending order
@@ -61,11 +63,12 @@ class population:
 
 
 class genetic_process:
-	def __init__(self, generation, population, parents, selection_method, crossover_method, mutation_method, mutation_rate):
-		self.generation = generation
+	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, mutation_rate, crossover_rate):
+		self.generations = generations
 		self.population = population
 		self.parents = parents
 		self.mutation_rate = mutation_rate
+		self.crossover_rate = crossover_rate
 		self.selection_method = selection_method
 		self.crossover_method = crossover_method
 		self.mutation_method = mutation_method
@@ -77,7 +80,7 @@ class genetic_process:
 
 
 	def run(self):
-		for i in range(self.generation):
+		for i in range(self.generations):
 			print(f"🧬 Generation --- {i+1}")
 			scores, self.population_after_fitness = self.population.fitness_score(self.model, self.data)
 			print(f"\t▶  Best Score for Two Chromosomes --- {scores[:2]}\n")
