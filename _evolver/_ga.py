@@ -150,5 +150,5 @@ class genetic_process:
 
 	def save(self):
 		print(f"▶ Saving Best chromosomes and best scores")
-		np.save(f"best_chromo_in_{self.generation}_generations.npy", self.best_chromosomes)
-		np.save(f"best_scores_in_{self.generation}_generations.npy", self.best_scores)
+		np.save(f"utils/best_chromo_in_{self.generation}_generations.npy", self.best_chromosomes)
+		np.save(f"utils/best_scores_in_{self.generation}_generations.npy", self.best_scores)

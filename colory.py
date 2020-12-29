@@ -17,7 +17,7 @@
 |-------------------------------------------------------------------------------------------------
 |
 | USAGE : 
-|			python colory.py --adj-mat adj_mat.txt --colors o r b \
+|			python colory.py --adj-mat utils/adj_mat.txt --colors o r b \
 |							 --chromosomes 200 --generations 15 --parents 10 \
 |							 --selection-method roulette_wheel --crossover-method multi_point \
 |							 --mutation-method flipping --mutation-rate 0.20 --corssover-rate 0.80
@@ -68,8 +68,8 @@ args = parser.parse_args()
 
 # ------------ defining the paths and building adjacency matrix
 # -------------------------------------------------------------------------
-BEST_CHROMOSOME_PATH = f"best_chromo_in_{args.generation}_generations.npy"
-BEST_SCORE_PATH      = f"best_scores_in_{args.generation}_generations.npy"
+BEST_CHROMOSOME_PATH = f"utils/best_chromo_in_{args.generation}_generations.npy"
+BEST_SCORE_PATH      = f"utils/best_scores_in_{args.generation}_generations.npy"
 ADJ_MAT              = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
 									[x for x in row.replace('\n', '').split(" ")])))) for row in args.adj_mat.readlines()])
 
