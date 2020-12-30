@@ -24,3 +24,7 @@ python3 colory.py --adj-mat utils/adj_mat.txt --colors o r b --chromosomes 200 -
 > ⚠️ A default adjacency matrix is filled out in a text file called `adj_mat.txt` inside `utils` folder. You can create another one with the same structure of the default one from your graph and put it in there.
 
 ## 📋 Procedures
+
+#### 📌 Encoding
+
+#### 📌 Objective functions
