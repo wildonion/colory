@@ -18,7 +18,7 @@ class gene:
 
 class chromosome:
 	def __init__(self, genes):
-		self.genes_objects = np.array([gene(g) for g in genes]) # list of all genes objects
+		self.genes_objects = np.array([gene(g) for g in genes]) # list of all genes object
 		self.genes = genes # list of genes value
 
 	def fitness(self):
@@ -32,17 +32,15 @@ class chromosome:
 
 
 class population:
-	def __init__(self, amount=200, colors=3, chromosomes=None):
-		self.amount = amount
-		self.colors = colors
-		self.pop = [] # list of all chromosomes (solutions)
+	def __init__(self, ADJ_MAT, amount=200, colors=3, chromosomes=None):
+		self.amount  = amount
+		self.colors  = colors
+		self.adj_mat = ADJ_MAT
 		if not chromosomes: self.__init_pop()
 		else: self.pop = [chromosome(c) for c in chromosomes]
 	
 	def __init_pop(self):
-		for i in range(self.amount):
-			c = None # build each chromosome with at least self.color genes
-			self.pop.append(chromosome(c))
+		self.pop = [chromosome([self.colors.index(np.random.choice(self.colors, 1)[0]) for _ in range(len(self.adj_mat))]) for _ in range(self.amount)] # list of all chromosomes (solutions) - build each chromosome genes with a random inex of colors list
 
 	def fitness_score(self):
 		scores = [] # scores
