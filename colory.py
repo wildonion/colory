@@ -20,7 +20,7 @@
 |			python colory.py --adj-mat utils/adj_mat.txt --colors o r b \
 |							 --chromosomes 200 --generations 15 --parents 10 \
 |							 --selection-method roulette_wheel --crossover-method multi_point \
-|							 --mutation-method flipping --mutation-rate 0.20 --corssover-rate 0.80
+|							 --mutation-method flipping --mutation-rate 0.20 --crossover-rate 0.80
 |			
 |
 |
@@ -48,7 +48,7 @@ from _evolver import population, genetic_process
 
 # ------------ argument options
 # -------------------------------
-parser = argparse.ArgumentParser(description='Graph Coloring using Genetic Algorithm')
+parser = argparse.ArgumentParser(description='【Graph Coloring using Genetic Algorithm】')
 parser.add_argument('--adj-mat', help='Path to adjacency matrix', type=argparse.FileType('r', encoding='UTF-8'), required=True)
 parser.add_argument('--colors', action='store', nargs="+", help='Name of colors separated by space', required=True)
 parser.add_argument('--chromosomes', action='store', type=int, help='The number of total chromosomes in a population', required=True)
@@ -68,8 +68,8 @@ args = parser.parse_args()
 
 # ------------ defining the paths and building adjacency matrix
 # -------------------------------------------------------------------------
-BEST_CHROMOSOME_PATH = f"utils/best_chromo_in_{args.generation}_generations.npy"
-BEST_SCORE_PATH      = f"utils/best_scores_in_{args.generation}_generations.npy"
+BEST_CHROMOSOME_PATH = f"best_chromo_in_{args.generations}_generations.npy"
+BEST_SCORE_PATH      = f"best_scores_in_{args.generations}_generations.npy"
 ADJ_MAT              = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
 									[x for x in row.replace('\n', '').split(" ")])))) for row in args.adj_mat.readlines()])
 
@@ -91,7 +91,7 @@ if len(args.colors) == len(ADJ_MAT) or len(args.colors) > len(ADJ_MAT):
 # ------------ we can paint the graph using available colors
 # ----------------------------------------------------------------
 elif len(args.colors) < len(ADJ_MAT):
-	print(f"\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗solving the problem by using GA‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗\n")
+	print(f"\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗finding valid colors for each node using GA‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗\n")
 
 
 
@@ -99,8 +99,7 @@ elif len(args.colors) < len(ADJ_MAT):
 
 	# ------------ initialize the population using defined arguments
 	# --------------------------------------------------------------------
-	pop = population(args.chromosomes, args.colors)
-
+	pop = population(ADJ_MAT, args.chromosomes, args.colors)
 
 
 
@@ -108,7 +107,7 @@ elif len(args.colors) < len(ADJ_MAT):
 
 	# ------------ testing design patterns
 	# -----------------------------------------
-	print(f"second index of third population genes with length {len(pop[3])} is ::: {pop[3].genes_objects[2].allele}")
+	print(f"🧬 second gene of third chromosome with length {len(pop[3])} is ::: {pop[3].genes_objects[2].allele}")
 
 
 
@@ -118,7 +117,7 @@ elif len(args.colors) < len(ADJ_MAT):
 
 	# ------------ loading best chromosomes and best scores
 	# --------------------------------------------------------------------
-	if os.path.exists(BEST_CHROMOSOME_PATH) and os.path.exists(BEST_SCORE_PATH): # load saved chromosomes and scores
+	if os.path.exists(f"utils/+{BEST_CHROMOSOME_PATH}") and os.path.exists(f"utils/+{BEST_SCORE_PATH}"): # load saved chromosomes and scores
 		best_chromosomes = np.load(BEST_CHROMOSOME_PATH)
 		best_scores = np.load(BEST_SCORE_PATH)
 	
