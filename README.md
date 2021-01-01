@@ -16,11 +16,7 @@ pip install requirements.txt
 ## 💻 Usage
 
 ```console
-python colory.py --adj-mat utils/adj_mat.txt --colors o r b \
-				 --chromosomes 50 --generations 15 --parents 10 \
-				 --selection-method roulette_wheel --crossover-method 2_point \
-				 --mutation-method creep --replacement_method generational_elitism \
-				 --mutation-rate 0.20 --crossover-rate 0.80
+python colory.py --adj-mat utils/adj_mat.txt --colors o r b --chromosomes 50 --generations 15 --parents 10 --selection-method roulette_wheel --crossover-method 2_point --mutation-method creep --replacement-method generational_elitism --mutation-rate 0.20 --crossover-rate 0.80
 
 ```
 
