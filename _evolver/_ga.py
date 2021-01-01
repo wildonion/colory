@@ -97,7 +97,7 @@ class genetic_process:
 	def run(self):
 		for i in range(self.generations): # TODO - stopping criterion: if fitness == 0
 			print(f"🧬 Generation --- {i+1}")
-			scores, self.population_after_fitness = self.population.fitness_scores(self.model, self.data)
+			scores, self.population_after_fitness = self.population.fitness_scores()
 			print(f"\t▶  Best Score --- {scores[:2]}\n")
 			# =================== GA Operators ===================
 			self.__selection() # select best chromosomes as parents
