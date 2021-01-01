@@ -132,10 +132,11 @@ class genetic_process:
 	def __crossover(self):
 		# http://ijcsit.com/docs/Volume%205/vol5issue06/ijcsit2014050673.pdf
 		offspring = []
-		if self.crossover_method == "n_point":
+		if "point" in self.crossover_method:
+			point = self.crossover_method.split("_")[0] # point to crossover
 			self.population_after_crossover = offspring
 			raise NotImplementedError # TODO
-		elif self.crossover_method == "uniform":
+		if self.crossover_method == "uniform":
 			self.population_after_crossover = offspring
 			raise NotImplementedError # TODO
 		elif self.crossover_method == "pmx":
