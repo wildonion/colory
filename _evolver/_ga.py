@@ -34,9 +34,9 @@ class chromosome:
 
 	def __invalid_genes_objective(self, adj_mat):
 		invalid = 0
-		for i in range(len(self.gene_objects)):
-			if self.gene_objects[i].allele == self.gene_objects[(i+1)%len(self.gene_objects)].allele:
-				if adj_mat[i][(i+1)%len(self.gene_objects)] == 1: # there is an edge between this node and the next node
+		for i in range(self.gene_objects.shape[0]):
+			if self.gene_objects[i].allele == self.gene_objects[(i+1)%self.gene_objects.shape[0]].allele:
+				if adj_mat[i][(i+1)%self.gene_objects.shape[0]] == 1: # there is an edge between this node and the next node
 					invalid += 1
 		return invalid
 
