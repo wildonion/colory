@@ -64,8 +64,8 @@ args = parser.parse_args()
 
 # ------------ defining the paths and building adjacency matrix
 # -------------------------------------------------------------------------
-BEST_CHROMOSOME_PATH = f"best_chromo_in_{args.generations}_generations.npy"
-BEST_SCORE_PATH      = f"best_fitness_scores_in_{args.generations}_generations.npy"
+BEST_CHROMOSOMES_PATH = f"best_chromo_in_{args.generations}_generations.npy"
+BEST_SCORES_PATH      = f"best_fitness_scores_in_{args.generations}_generations.npy"
 ADJ_MAT              = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
 									[x for x in row.replace('\n', '').split(" ")])))) for row in args.adj_mat.readlines()])
 COLORS               = np.array(args.colors)
@@ -93,7 +93,7 @@ elif len(args.colors) < len(ADJ_MAT):
 
 	# ------------ initialize the population using defined arguments
 	# --------------------------------------------------------------------
-	pop = population(args.chromosomes, COLORS, ADJ_MAT)
+	pop = population(COLORS, args.chromosomes, ADJ_MAT)
 
 
 
@@ -111,10 +111,10 @@ elif len(args.colors) < len(ADJ_MAT):
 
 	# ------------ loading best chromosomes and best fitness scores
 	# --------------------------------------------------------------------
-	if os.path.exists(f"utils/+{BEST_CHROMOSOME_PATH}") and os.path.exists(f"utils/+{BEST_SCORE_PATH}"): # load saved chromosomes and fitness scores
+	if os.path.exists(f"utils/+{BEST_CHROMOSOMES_PATH}") and os.path.exists(f"utils/+{BEST_SCORES_PATH}"): # load saved chromosomes and fitness scores
 		print(f"\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗loading best chromosomes and fitness scores in each generation‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗\n")
-		best_chromosomes = np.load(BEST_CHROMOSOME_PATH)
-		best_fitness_scores = np.load(BEST_SCORE_PATH)
+		best_chromosomes = np.load(BEST_CHROMOSOMES_PATH)
+		best_fitness_scores = np.load(BEST_SCORES_PATH)
 	
 
 
