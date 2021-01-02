@@ -26,7 +26,7 @@ class chromosome:
 		total_edges              = int(adj_mat[adj_mat==1].sum()/2) # sum up thoes place in adjacency matrix that their value is 1, because there is an edge between that row and that column of the matrix
 		invalid_genes            = self.__invalid_genes_objective(adj_mat) # total number of invalid genes, it might be equal to zero which means that there is no invalid coloring
 		minimum_number_of_colors = self.__minimum_genes_objective(colors) # this is the m′, the minimum number of colors used in this chromosome, it might be equal to the number of total input colors 
-		m_prime_normalized       = minimum_number_of_colors - 1 / colors.shape[0] # normalizing the range of m′
+		m_prime_normalized       = (minimum_number_of_colors - 1) / colors.shape[0] # normalizing the range of m′
 		invalid_normalized       = invalid_genes / total_edges # normalizing the range of invalid genes
 		total_fitness            = (alpha*invalid_normalized) + (beta*m_prime_normalized) # total fitness of this genotype (chromosome) 
 		return total_fitness
@@ -43,7 +43,7 @@ class chromosome:
 
 	def __minimum_genes_objective(self, colors):
 		_, unique_indices = np.unique(self.genes, return_index=True)
-		unique_colors = self.genes[unique_indices]
+		unique_colors = self.genes[unique_indices] # all unique colors inside a genotype (choromosome)
 		m_prime = unique_colors.shape[0] if unique_colors.shape[0] < colors.shape[0] else colors.shape[0]
 		return m_prime # minimum value is 1 and maximum value is colors.shape[0]
 
@@ -55,7 +55,7 @@ class chromosome:
 
 
 class population:
-	def __init__(self, amount=200, colors=3, adj_mat=None, chromosomes=None):
+	def __init__(self, colors=None, amount=None, adj_mat=None, chromosomes=None):
 		self.amount  = amount
 		self.colors  = colors
 		self.adj_mat = adj_mat
@@ -63,10 +63,15 @@ class population:
 		else: self.pop = np.array([chromosome(c) for c in chromosomes])
 	
 	def __init_pop(self): # permutation encoding
-		self.pop = [chromosome([np.where(self.colors == np.random.choice(self.colors, 1))[0] for _ in range(self.adj_mat.shape[0])]) for _ in range(self.amount)] # list of all chromosomes (solutions) - build each chromosome genes with a random inex of colors list
+		self.pop = [chromosome([np.where(self.colors == np.random.choice(self.colors, 1))[0] for _ in range(self.adj_mat.shape[0])]) for _ in range(self.amount)] # build each chromosome genes with a random index of colors list
 
 	def fitness_scores(self):
 		fitness_scores = [chromosome.fitness(self.adj_mat, self.colors) for chromosome in self.pop] # all chromosomes fitness inside the generated population
+		fitness_scores, population = np.array(fitness_scores), np.array([c.genes for c in self.pop]) # make a numpy array from fitness_scores and the population - self.pop contains chromosome objects, here we're putting each chromosome genes inside a population and make that population a numpy array
+		indices = np.argsort(fitness_scores) # return the indices of sorted fitness scores in ascending order - used in rank selection
+		ascending_fitness_scores = fitness_scores[indices] # sorted fitness scores in ascending order because the first one is the best chromosome that has the minimum fitness
+		ascending_population_based_on_fitness_scores = population[indices] # sorted population of chromosomes fitness scores in ascending order
+		return ascending_fitness_scores, ascending_population_based_on_fitness_scores # return ascending order of fitness scores and population of none object genes chromosome
 
 	def __len__(self):
 		return self.pop.shape[0]
@@ -95,10 +100,10 @@ class genetic_process:
 
 
 	def run(self):
-		for i in range(self.generations): # TODO - stopping criterion: if fitness == 0
+		for i in range(self.generations):
 			print(f"🧬 Generation --- {i+1}")
-			scores, self.population_after_fitness = self.population.fitness_scores()
-			print(f"\t▶  Best Score --- {scores[:2]}\n")
+			fitness_scores, self.population_after_fitness = self.population.fitness_scores()
+			print(f"\t▶  Best Fitness Scores of Two First Chromosomes --- {fitness_scores[:2]}\n") # minimum fitness scores are the best ones
 			# =================== GA Operators ===================
 			self.__selection() # select best chromosomes as parents
 			self.__crossover() # parents mating pool
@@ -106,7 +111,7 @@ class genetic_process:
 			self.__replacement() # replacing old population
 			# ====================================================
 			self.best_chromosomes.append(self.population_after_fitness[0])
-			self.best_fitness_scores.append(scores[0])
+			self.best_fitness_scores.append(fitness_scores[0])
 
 	def __selection(self):
 		population_after_selection = []
@@ -121,7 +126,9 @@ class genetic_process:
 						population_after_selection.append(self.population[j].genes)
 			self.population_after_selection = population_after_selection # parents population
 		elif self.selection_method == "rank":
-			self.population_after_selection = population_after_selection # parents population
+			for p in range(self.parents):
+				population_after_selection.append(self.population_after_fitness[p])
+			self.population_after_selection = np.array(population_after_selection) # parents population
 			raise NotImplementedError # TODO
 		elif self.selection_method == "tournament":
 			self.population_after_selection = population_after_selection # parents population
@@ -192,9 +199,9 @@ class genetic_process:
 	def draw(self):
 		# https://plotly.com/python/v3/3d-network-graph/
 		# https://plotly.com/python/network-graphs/
-		pass
+		print(self.best_chromosomes[0]) # the first one is the best one because its sorted in ascending order and is minimum
 
 	def save(self):
 		print(f"▶ Saving Best chromosomes and best scores")
-		np.save(f"utils/best_chromo_in_{self.generation}_generations.npy", self.best_chromosomes)
-		np.save(f"utils/best_fitness_scores_in_{self.generation}_generations.npy", self.best_fitness_scores)
+		np.save(f"utils/best_chromo_in_{self.generations}_generations.npy", self.best_chromosomes)
+		np.save(f"utils/best_fitness_scores_in_{self.generations}_generations.npy", self.best_fitness_scores)
