@@ -18,7 +18,7 @@ class gene:
 
 class chromosome:
 	def __init__(self, genes):
-		self.gene_objects = np.array([gene(g) for g in genes]) # list of all gene objects
+		self.gene_objects = np.array([gene(g) for g in self.genes]) # list of all gene objects
 		self.genes = np.array(genes) # list of all gene values
 
 	def fitness(self, adj_mat, colors):
@@ -35,8 +35,9 @@ class chromosome:
 	def __invalid_genes_objective(self, adj_mat):
 		invalid = 0
 		for i in range(self.gene_objects.shape[0]):
-			if self.gene_objects[i].allele == self.gene_objects[(i+1)%self.gene_objects.shape[0]].allele:
-				if adj_mat[i][(i+1)%self.gene_objects.shape[0]] == 1: # there is an edge between this node and the next node
+			next_index = (i+1)%self.gene_objects.shape[0]
+			if next_index != 0 and self.gene_objects[i].allele == self.gene_objects[next_index].allele:
+				if adj_mat[i][next_index] == 1: # there is an edge between this node and the next node
 					invalid += 1
 		return invalid
 
@@ -63,7 +64,7 @@ class population:
 		else: self.pop = np.array([chromosome(c) for c in chromosomes])
 	
 	def __init_pop(self): # permutation encoding
-		self.pop = [chromosome([np.where(self.colors == np.random.choice(self.colors, 1))[0] for _ in range(self.adj_mat.shape[0])]) for _ in range(self.amount)] # build each chromosome genes with a random index of colors list
+		self.pop = [chromosome([np.where(self.colors == np.random.choice(self.colors, 1))[0][0] for _ in range(self.adj_mat.shape[0])]) for _ in range(self.amount)] # build each chromosome genes with a random index of colors list
 
 	def fitness_scores(self):
 		fitness_scores = [chromosome.fitness(self.adj_mat, self.colors) for chromosome in self.pop] # all chromosomes fitness inside the generated population
