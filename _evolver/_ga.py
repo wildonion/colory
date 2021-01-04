@@ -18,8 +18,8 @@ class gene:
 
 class chromosome:
 	def __init__(self, genes):
-		self.gene_objects = np.array([gene(g) for g in self.genes]) # list of all gene objects
 		self.genes = np.array(genes) # list of all gene values
+		self.gene_objects = np.array([gene(g) for g in self.genes]) # list of all gene objects
 
 	def fitness(self, adj_mat, colors):
 		alpha, beta              = 0.8, 0.2
@@ -68,11 +68,11 @@ class population:
 
 	def fitness_scores(self):
 		fitness_scores = [chromosome.fitness(self.adj_mat, self.colors) for chromosome in self.pop] # all chromosomes fitness inside the generated population
-		fitness_scores, population = np.array(fitness_scores), np.array([c.genes for c in self.pop]) # make a numpy array from fitness_scores and the population - self.pop contains chromosome objects, here we're putting each chromosome genes inside a population and make that population a numpy array
-		indices = np.argsort(fitness_scores) # return the indices of sorted fitness scores in ascending order - used in rank selection
-		ascending_fitness_scores = fitness_scores[indices] # sorted fitness scores in ascending order because the first one is the best chromosome that has the minimum fitness
-		ascending_population_based_on_fitness_scores = population[indices] # sorted population of chromosomes fitness scores in ascending order
-		return ascending_fitness_scores, ascending_population_based_on_fitness_scores # return ascending order of fitness scores and population of none object genes chromosome
+		fitness_scores, genes_population, chromosome_objects_population = np.array(fitness_scores), np.array([c.genes for c in self.pop]), self.pop
+		indices = np.argsort(fitness_scores)
+		ascending_fitness_scores = fitness_scores[indices]
+		ascending_genes_population_based_on_fitness_scores = genes_population[indices]
+		return ascending_fitness_scores, ascending_genes_population_based_on_fitness_scores, chromosome_objects_population
 
 	def __len__(self):
 		return self.pop.shape[0]
@@ -80,9 +80,17 @@ class population:
 	def __getitem__(self, idx):
 		return self.pop[idx]
 
+	def get_adj_mat(self):
+		return self.adj_mat
 
-class genetic_process:
+	def get_colors(self):
+		return self.colors
+
+
+class genetic_process(population):
 	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, replacement_method, mutation_rate, crossover_rate):
+		self.adj_mat = population.get_adj_mat()
+		self.colors = population.get_colors()
 		self.generations = generations
 		self.population = population
 		self.parents = parents
@@ -92,7 +100,7 @@ class genetic_process:
 		self.crossover_method = crossover_method
 		self.mutation_method = mutation_method
 		self.replacement_method = replacement_method
-		self.population_after_fitness = []
+		self.genes_population_after_fitness = []
 		self.population_after_selection = []
 		self.population_after_crossover = []
 		self.population_after_mutation = []
@@ -103,7 +111,7 @@ class genetic_process:
 	def run(self):
 		for i in range(self.generations):
 			print(f"🧬 Generation --- {i+1}")
-			fitness_scores, self.population_after_fitness = self.population.fitness_scores()
+			fitness_scores, self.genes_population_after_fitness, self.chromosome_objects_population_after_fitness = self.population.fitness_scores()
 			print(f"\t▶  Best Fitness Scores of Two First Chromosomes --- {fitness_scores[:2]}\n") # minimum fitness scores are the best ones
 			# =================== GA Operators ===================
 			self.__selection() # select best chromosomes as parents
@@ -111,12 +119,12 @@ class genetic_process:
 			self.__mutation() # mutating genes
 			self.__replacement() # replacing old population
 			# ====================================================
-			self.best_chromosomes.append(self.population_after_fitness[0])
+			self.best_chromosomes.append(self.genes_population_after_fitness[0])
 			self.best_fitness_scores.append(fitness_scores[0])
 
 	def __selection(self):
 		population_after_selection = []
-		if self.selection_method == "roulette_wheel":
+		if self.selection_method == "roulette_wheel": # =====================================================================================
 			fitness_population = sum(self.population.fitness_scores(self.model, self.data)[0]) # sum of all scores (fitnesses)
 			individual_expected_values = [c.fitness(self.model, self.data)/fitness_population for c in self.population] # all chromosomes prob (exprected values)
 			cum_prob = [sum(individual_expected_values[:i+1]) for i in range(len(individual_expected_values))] # cumulative sum of chromosomes exprected values (prob)
@@ -126,14 +134,25 @@ class genetic_process:
 					if cum_prob[j] >= r:
 						population_after_selection.append(self.population[j].genes)
 			self.population_after_selection = population_after_selection # parents population
-		elif self.selection_method == "rank":
-			for p in range(self.parents):
-				population_after_selection.append(self.population_after_fitness[p])
+		elif self.selection_method == "rank": # =====================================================================================
+			for p in range(self.parents): # the first self.parents chromosomes are the best ones
+				population_after_selection.append(self.genes_population_after_fitness[p])
 			self.population_after_selection = np.array(population_after_selection) # parents population
-			raise NotImplementedError # TODO
-		elif self.selection_method == "tournament":
-			self.population_after_selection = population_after_selection # parents population
-			raise NotImplementedError # TODO
+		elif self.selection_method == "tournament": # =====================================================================================
+			k = int(np.log2(len(self.chromosome_objects_population_after_fitness)))
+			population_after_tournament = []
+			for _ in range(len(self.chromosome_objects_population_after_fitness)):
+				tournament_population = random.sample(self.chromosome_objects_population_after_fitness, k)
+				tournament_population_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in tournament_population])
+				indices = np.argsort(tournament_population_fitness_scores)
+				sorted_tournament_population_based_on_fitness_scores = [tournament_population[idx] for idx in indices]
+				population_after_tournament.append(sorted_tournament_population_based_on_fitness_scores[0])
+			population_after_tournament_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in population_after_tournament])
+			indices = np.argsort(population_after_tournament_fitness_scores)
+			sorted_population_after_tournament = [population_after_tournament[idx] for idx in indices]
+			for p in range(self.parents):
+				population_after_selection.append(sorted_population_after_tournament[p].genes)
+			self.population_after_selection = np.array(population_after_selection) # parents population
 		else:
 			raise NotImplementedError
 
