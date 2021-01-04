@@ -76,7 +76,7 @@ COLORS               = np.array(args.colors)
 
 # ------------ it's not possible to paint the graph using available colors
 # --------------------------------------------------------------------------------------
-if len(args.colors) == len(ADJ_MAT) or len(args.colors) > len(ADJ_MAT):
+if COLORS.shape[0] == len(ADJ_MAT) or COLORS.shape[0] > len(ADJ_MAT):
 	print("\t❌ no need to use GA, you can paint each node with a specific color\n")
 	sys.exit(1)
 
@@ -86,7 +86,7 @@ if len(args.colors) == len(ADJ_MAT) or len(args.colors) > len(ADJ_MAT):
 
 # ------------ we can paint the graph using available colors
 # ----------------------------------------------------------------
-elif len(args.colors) < len(ADJ_MAT):
+elif COLORS.shape[0] < len(ADJ_MAT):
 	
 
 
@@ -101,7 +101,7 @@ elif len(args.colors) < len(ADJ_MAT):
 
 	# ------------ testing design patterns
 	# -----------------------------------------
-	print(f"\t🧬 second gene of third chromosome with length {len(pop[3])} is ::: {pop[3].gene_objects[2].allele}")
+	print(f"\n\t🧬 third gene of third chromosome with length {len(pop[2])} is ::: {pop[2].gene_objects[2].allele}")
 
 
 
