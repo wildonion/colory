@@ -8,7 +8,7 @@
 ## 🔧 Setup
 
 ```console
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 > ⚠️ A default adjacency matrix is filled out in a text file called `adj_mat.txt` inside `utils` folder. You can create another one with the same structure of the default one from your graph and put it in there.
