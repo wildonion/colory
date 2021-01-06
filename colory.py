@@ -66,9 +66,9 @@ args = parser.parse_args()
 # -------------------------------------------------------------------------
 BEST_CHROMOSOMES_PATH = f"best_chromo_in_{args.generations}_generations.npy"
 BEST_SCORES_PATH      = f"best_fitness_scores_in_{args.generations}_generations.npy"
-ADJ_MAT              = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
+ADJ_MAT               = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
 									[x for x in row.replace('\n', '').split(" ")])))) for row in args.adj_mat.readlines()])
-COLORS               = np.array(args.colors)
+COLORS                = np.array(args.colors)
 
 
 
