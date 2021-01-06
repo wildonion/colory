@@ -111,13 +111,13 @@ class genetic_process(population):
 	def run(self):
 		for i in range(self.generations):
 			print(f"🧬 Generation --- {i+1}")
-			fitness_scores, self.genes_population_after_fitness, self.chromosome_objects_population_after_fitness = self.population.fitness_scores()
+			fitness_scores, self.genes_population_after_fitness, self.chromosome_objects_population = self.population.fitness_scores()
 			print(f"\t▶  Best Fitness Scores of Two First Chromosomes --- {fitness_scores[:2]}\n") # minimum fitness scores are the best ones
 			# =================== GA Operators ===================
 			self.__selection() # select best chromosomes as parents
 			self.__crossover() # parents mating pool
-			self.__mutation() # mutating genes
-			self.__replacement() # replacing old population
+			# self.__mutation() # mutating genes
+			# self.__replacement() # replacing old population
 			# ====================================================
 			self.best_chromosomes.append(self.genes_population_after_fitness[0])
 			self.best_fitness_scores.append(fitness_scores[0])
@@ -125,24 +125,25 @@ class genetic_process(population):
 	def __selection(self):
 		population_after_selection = []
 		if self.selection_method == "roulette_wheel": # =====================================================================================
-			fitness_population = sum(self.population.fitness_scores(self.model, self.data)[0]) # sum of all scores (fitnesses)
-			individual_expected_values = [c.fitness(self.model, self.data)/fitness_population for c in self.population] # all chromosomes prob (exprected values)
+			fitness_population = sum([c.fitness(self.adj_mat, self.colors) for c in self.population]) # sum of all scores (fitnesses)
+			individual_expected_values = [(1/c.fitness(self.adj_mat, self.colors))/fitness_population for c in self.population] # all chromosomes prob (exprected values) - we scaled up every chromosome fitness cause big roulette of the wheel belongs to minimum fitnesses 
 			cum_prob = [sum(individual_expected_values[:i+1]) for i in range(len(individual_expected_values))] # cumulative sum of chromosomes exprected values (prob)
 			for i in range(self.parents):
 				r = random.random()
-				for j, chromosome in enumerate(self.population):
-					if cum_prob[j] >= r:
-						population_after_selection.append(self.population[j].genes)
-			self.population_after_selection = population_after_selection # parents population
+				if cum_prob[i] >= r: # add this chromosome only if its cum_prob is greater than the generated random number
+					population_after_selection.append(self.population[i].genes)
+			self.population_after_selection = np.array(population_after_selection) # parents population
+		
 		elif self.selection_method == "rank": # =====================================================================================
 			for p in range(self.parents): # the first self.parents chromosomes are the best ones
 				population_after_selection.append(self.genes_population_after_fitness[p])
 			self.population_after_selection = np.array(population_after_selection) # parents population
+		
 		elif self.selection_method == "tournament": # =====================================================================================
-			k = int(np.log2(len(self.chromosome_objects_population_after_fitness)))
+			k = int(np.log2(len(self.chromosome_objects_population)))
 			population_after_tournament = []
-			for _ in range(len(self.chromosome_objects_population_after_fitness)):
-				tournament_population = random.sample(self.chromosome_objects_population_after_fitness, k)
+			for _ in range(len(self.chromosome_objects_population)):
+				tournament_population = random.sample(self.chromosome_objects_population, k)
 				tournament_population_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in tournament_population])
 				indices = np.argsort(tournament_population_fitness_scores)
 				sorted_tournament_population_based_on_fitness_scores = [tournament_population[idx] for idx in indices]
@@ -157,39 +158,58 @@ class genetic_process(population):
 			raise NotImplementedError
 
 	def __crossover(self):
-		# http://ijcsit.com/docs/Volume%205/vol5issue06/ijcsit2014050673.pdf
 		offspring = []
 		if "point" in self.crossover_method:
-			point = self.crossover_method.split("_")[0] # point to crossover
-			self.population_after_crossover = offspring
+			points = int(self.crossover_method.split("_")[0]) # point to crossover
+			if points >= self.adj_mat.shape[0]-2:
+				raise ValueError("\t❌ the point is too large")
+			else:
+				point_indices = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines
+				# point_indices = [0, 1, 3]
+				# p1 = [0 | 1 | 0 2 | 1]
+				# p2 = [1 | 0 | 1 1 | 0]
+				# o1 = [0 0 0 1 1]
+				# o2 = [1 1 1 2 0]
+				for curr_idx in range(self.parents):
+					next_index = (curr_idx+1)%self.parents if next_index != 0 else: break
+					first_parent  = self.population_after_selection[curr_idx]
+					second_parent = self.population_after_selection[next_index]
+					first_child   = np.zeros(self.adj_mat.shape[0])
+					second_child  = np.zeros(self.adj_mat.shape[0])
+					for line_idx in np.sort(point_indices):
+						pass 
+					offspring.append(first_child)
+					offspring.append(second_child)
+				self.population_after_crossover = np.array(offspring)
+				
+
+			self.population_after_crossover = np.array(offspring)
+		elif self.crossover_method == "uniform": # =====================================================================================
+			self.population_after_crossover = np.array(offspring)
 			raise NotImplementedError # TODO
-		if self.crossover_method == "uniform":
-			self.population_after_crossover = offspring
+		elif self.crossover_method == "pmx": # =====================================================================================
+			self.population_after_crossover = np.array(offspring)
 			raise NotImplementedError # TODO
-		elif self.crossover_method == "pmx":
-			self.population_after_crossover = offspring
-			raise NotImplementedError # TODO
-		elif self.crossover_method == "ox":
-			self.population_after_crossover = offspring
+		elif self.crossover_method == "ox": # =====================================================================================
+			self.population_after_crossover = np.array(offspring)
 			raise NotImplementedError # TODO
 		else:
 			raise NotImplementedError
 
 
 	def __mutation(self):
-		# http://ijcsit.com/docs/Volume%205/vol5issue03/ijcsit20140503404.pdf
 		offspring_after_mutation = []
-		if self.mutation_method == "swap":
-			self.population_after_mutation = offspring_after_mutation
+		if self.mutation_method == "swap": # =====================================================================================
+			self.population_after_mutation = np.array(offspring_after_mutation)
 			raise NotImplementedError # TODO
-		elif self.mutation_method == "creep":
-			self.population_after_mutation = offspring_after_mutation
+		elif self.mutation_method == "creep": # =====================================================================================
+			self.population_after_mutation = np.array(offspring_after_mutation)
 			raise NotImplementedError # TODO
-		elif self.mutation_rate == "interchanging":
-			self.population_after_mutation = offspring_after_mutation
+		elif self.mutation_rate == "interchanging": # =====================================================================================
+			self.population_after_mutation = np.array(offspring_after_mutation)
 			raise NotImplementedError # TODO
-		elif self.mutation_rate == "reversing":
-			self.population_after_mutation = offspring_after_mutation
+		elif self.mutation_rate == "reversing": # =====================================================================================
+			self.population_after_mutation = np.array(offspring_after_mutation)
 			raise NotImplementedError # TODO
 		else:
 			raise NotImplementedError
@@ -197,13 +217,13 @@ class genetic_process(population):
 	def __replacement(self):
 		population_next_generation = []
 		if self.mutation_method == "generational_elitism":
-			self.population = population_next_generation
+			self.population = np.array(population_next_generation)
 			raise NotImplementedError # TODO
 		elif self.mutation_method == "generational_gap":
-			self.population = population_next_generation
+			self.population = np.array(population_next_generation)
 			raise NotImplementedError # TODO
 		elif self.mutation_rate == "steady_state":
-			self.population = population_next_generation
+			self.population = np.array(population_next_generation)
 			raise NotImplementedError # TODO
 		else:
 			raise NotImplementedError
