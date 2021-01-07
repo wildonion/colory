@@ -16,6 +16,8 @@ class gene:
 		self.allele = allele # value of gene
 
 
+# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+
 class chromosome:
 	def __init__(self, genes):
 		self.genes = np.array(genes) # list of all gene values
@@ -55,6 +57,8 @@ class chromosome:
 		return self.genes.shape[0]
 
 
+# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+
 class population:
 	def __init__(self, colors=None, amount=None, adj_mat=None, chromosomes=None):
 		self.amount  = amount
@@ -87,6 +91,8 @@ class population:
 		return self.colors
 
 
+# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+
 class genetic_process(population):
 	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, replacement_method, mutation_rate, crossover_rate):
 		self.adj_mat = population.get_adj_mat()
@@ -100,18 +106,23 @@ class genetic_process(population):
 		self.crossover_method = crossover_method
 		self.mutation_method = mutation_method
 		self.replacement_method = replacement_method
-		self.genes_population_after_fitness = []
-		self.population_after_selection = []
-		self.population_after_crossover = []
-		self.population_after_mutation = []
+		self.genes_population_after_fitness = None
+		self.population_after_selection = None
+		self.population_after_crossover = None
+		self.population_after_mutation = None
 		self.best_chromosomes = []
 		self.best_fitness_scores = []
 
 
+
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	
 	def run(self):
-		for i in range(self.generations):
-			print(f"🧬 Generation --- {i+1}")
+		for g in range(self.generations):
+			print("\n≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣\n")
+			print(f"🧬 Generation --- {g+1}")
 			fitness_scores, self.genes_population_after_fitness, self.chromosome_objects_population = self.population.fitness_scores()
+			print(f"\t▶  Population Shape --- {self.genes_population_after_fitness.shape}\n")
 			print(f"\t▶  Best Fitness Scores of Two First Chromosomes --- {fitness_scores[:2]}\n") # minimum fitness scores are the best ones
 			# =================== GA Operators ===================
 			self.__selection() # select best chromosomes as parents
@@ -122,7 +133,10 @@ class genetic_process(population):
 			self.best_chromosomes.append(self.genes_population_after_fitness[0])
 			self.best_fitness_scores.append(fitness_scores[0])
 
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	
 	def __selection(self):
+		print(f"\t▶  Generating Parents Population using {self.selection_method} method\n")
 		population_after_selection = []
 		if self.selection_method == "roulette_wheel": # =====================================================================================
 			fitness_population = sum([c.fitness(self.adj_mat, self.colors) for c in self.population]) # sum of all scores (fitnesses)
@@ -156,48 +170,63 @@ class genetic_process(population):
 			self.population_after_selection = np.array(population_after_selection) # parents population
 		else:
 			raise NotImplementedError
+		print(f"\t▶  Population Shape After Selection --- {self.population_after_selection.shape}\n")
+	
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
+	def __single_point_crossover(self, p1, p2, point):
+		first_child = np.append(p1[:point], p2[point:])
+		second_child = np.append(p2[:point], p1[point:])
+		return first_child, second_child
+
+
+	def __multi_point_crossover(self, p1, p2, points):
+		for p in points:
+			p1, p2 = self.__single_point_crossover(p1, p2, p)
+		return p1, p2
+	
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	
 	def __crossover(self):
+		print(f"\t▶  Mating Parents using {self.crossover_method} method\n")
 		offspring = []
-		if "point" in self.crossover_method:
+		if "point" in self.crossover_method: # =====================================================================================
 			points = int(self.crossover_method.split("_")[0]) # point to crossover
-			if points >= self.adj_mat.shape[0]-2:
+			if points > self.adj_mat.shape[0]-2:
 				raise ValueError("\t❌ the point is too large")
 			else:
-				point_indices = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines
-				# point_indices = [0, 1, 3]
-				# p1 = [0 | 1 | 0 2 | 1]
-				# p2 = [1 | 0 | 1 1 | 0]
-				# o1 = [0 0 0 1 1]
-				# o2 = [1 1 1 2 0]
-				for curr_idx in range(self.parents):
-					next_index = (curr_idx+1)%self.parents if next_index != 0 else: break
-					first_parent  = self.population_after_selection[curr_idx]
-					second_parent = self.population_after_selection[next_index]
-					first_child   = np.zeros(self.adj_mat.shape[0])
-					second_child  = np.zeros(self.adj_mat.shape[0])
-					for line_idx in np.sort(point_indices):
-						pass 
-					offspring.append(first_child)
-					offspring.append(second_child)
-				self.population_after_crossover = np.array(offspring)
-				
+				point_indices   = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines
+				print(f"\t\t▶  Point Indices --- {point_indices}\n")
+				parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2)
+				parents         = self.population_after_selection[parents_indices]
+				print(f"\t\t▶  Selected Parents to Mate --- {list(parents)}\n")
+				if len(point_indices) == 1:
+					first_child, second_child = self.__single_point_crossover(parents[0], parents[1], point_indices[0])
+				elif len(point_indices) >= 2:
+					first_child, second_child = self.__multi_point_crossover(parents[0], parents[1], point_indices)
+				offspring.append(first_child)
+				offspring.append(second_child)
+				print(f"\t\t▶  Generated Offspring using t-point Crossover --- {offspring}\n")
+				self.population_after_crossover = np.vstack((self.population_after_selection, np.array(offspring)))
 
 			self.population_after_crossover = np.array(offspring)
 		elif self.crossover_method == "uniform": # =====================================================================================
 			self.population_after_crossover = np.array(offspring)
-			raise NotImplementedError # TODO
+			raise NotImplementedError
 		elif self.crossover_method == "pmx": # =====================================================================================
 			self.population_after_crossover = np.array(offspring)
-			raise NotImplementedError # TODO
+			raise NotImplementedError
 		elif self.crossover_method == "ox": # =====================================================================================
 			self.population_after_crossover = np.array(offspring)
-			raise NotImplementedError # TODO
+			raise NotImplementedError
 		else:
 			raise NotImplementedError
+		print(f"\t▶  Population Shape After Crossing Over --- {self.population_after_crossover.shape}\n")
 
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 	def __mutation(self):
+		print(f"\t▶  Mutating Offspring using {self.mutation_method} method\n")
 		offspring_after_mutation = []
 		if self.mutation_method == "swap": # =====================================================================================
 			self.population_after_mutation = np.array(offspring_after_mutation)
@@ -213,21 +242,28 @@ class genetic_process(population):
 			raise NotImplementedError # TODO
 		else:
 			raise NotImplementedError
+		print(f"\t▶  Population Shape After Mutation --- {self.population_after_crossover.shape}\n")
 
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	
 	def __replacement(self):
+		print(f"\t▶  Replcaing Old Population using {self.replacement_method} method\n")
 		population_next_generation = []
-		if self.mutation_method == "generational_elitism":
+		if self.replacement_method == "generational_elitism":
 			self.population = np.array(population_next_generation)
 			raise NotImplementedError # TODO
-		elif self.mutation_method == "generational_gap":
+		elif self.replacement_method == "generational_gap":
 			self.population = np.array(population_next_generation)
 			raise NotImplementedError # TODO
-		elif self.mutation_rate == "steady_state":
+		elif self.replacement_method == "steady_state":
 			self.population = np.array(population_next_generation)
 			raise NotImplementedError # TODO
 		else:
 			raise NotImplementedError
+		print(f"\t▶  Population Shape After Replacement --- {self.population.shape}\n")
 
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	
 	def plot(self):
 		fig = go.Figure()
 		fig.add_trace(go.Scatter(self.best_fitness_scores, mode='lines', name='Fitness Generation'))
@@ -235,13 +271,17 @@ class genetic_process(population):
 		fig.update_yaxes(title_text='Best Fitness')
 		fig.show()
 
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 	def draw(self):
 		# https://plotly.com/python/v3/3d-network-graph/
 		# https://plotly.com/python/network-graphs/
 		print(self.best_chromosomes[0]) # the first one is the best one because its sorted in ascending order and is minimum
 
+	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	
 	def save(self):
-		print(f"▶ Saving Best chromosomes and best scores")
+		print("\n≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣\n")
+		print(f"🔬 Saving Best Chromosomes and Best Fitness Scores")
 		np.save(f"utils/best_chromo_in_{self.generations}_generations.npy", self.best_chromosomes)
 		np.save(f"utils/best_fitness_scores_in_{self.generations}_generations.npy", self.best_fitness_scores)
