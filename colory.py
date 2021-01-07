@@ -18,8 +18,8 @@
 |
 | USAGE : 
 |			python colory.py --adj-mat utils/adj_mat.txt --colors o r b \
-|							 --chromosomes 50 --generations 15 --parents 10 \
-|							 --selection-method tournament --crossover-method 2_point \
+|							 --chromosomes 50 --generations 15 --parents 30 \
+|							 --selection-method tournament --crossover-method 3_point \
 |							 --mutation-method creep --replacement-method generational_elitism \
 |							 --mutation-rate 0.20 --crossover-rate 0.80
 |			
