@@ -50,7 +50,7 @@ parser.add_argument('--chromosomes', action='store', type=int, help='The number 
 parser.add_argument('--generations', action='store', type=int, help='The number of generations.', required=True)
 parser.add_argument('--parents', action='store', type=int, help='The number of parents to mate for breeding offspring.', required=True)
 parser.add_argument('--selection-method', action='store', type=str, help='Selection method for crossover operation (roulette_wheel, tournament or rank).', required=True)
-parser.add_argument('--crossover-method', action='store', type=str, help='Crossover method to generate offspring (n_point[where n is an integer], uniform, pmx or ox).', required=True)
+parser.add_argument('--crossover-method', action='store', type=str, help='Crossover method to generate offspring (n_point[where n is an integer] or uniform).', required=True)
 parser.add_argument('--mutation-method', action='store', type=str, help='Mutation method to mutate offspring (swap, creep, reversing or interchanging).', required=True)
 parser.add_argument('--replacement-method', action='store', type=str, help='Replacement method to replace the old population (generational_elitism, generational_gap, or steady_state).', required=True)
 parser.add_argument('--mutation-rate', action='store', type=float, help='Mutation rate (between 0.01 and 0.05 based on 20 <= chromosomes <= 30). You can use 1/chromosomes to setup the ratio.', required=True)
