@@ -114,7 +114,6 @@ class genetic_process(population):
 		self.best_fitness_scores = []
 
 
-
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 	
 	def run(self):
@@ -134,7 +133,8 @@ class genetic_process(population):
 			self.best_fitness_scores.append(fitness_scores[0])
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
-	
+	# 									SELECTION OPERATORS
+
 	def __selection(self):
 		print(f"\t▶  Generating Parents Population using {self.selection_method} method\n")
 		population_after_selection = []
@@ -186,9 +186,13 @@ class genetic_process(population):
 		return p1, p2
 	
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	# 									CROSSOVER OPERATORS
 	
 	def __crossover(self):
 		print(f"\t▶  Mating Parents using {self.crossover_method} method\n")
+		parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2)
+		parents         = self.population_after_selection[parents_indices]
+		print(f"\t▶  Selected Parents to Mate --- {list(parents)}\n")
 		offspring = []
 		if "point" in self.crossover_method: # =====================================================================================
 			points = int(self.crossover_method.split("_")[0]) # point to crossover
@@ -197,9 +201,6 @@ class genetic_process(population):
 			else:
 				point_indices   = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines
 				print(f"\t\t▶  Point Indices --- {point_indices}\n")
-				parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2)
-				parents         = self.population_after_selection[parents_indices]
-				print(f"\t\t▶  Selected Parents to Mate --- {list(parents)}\n")
 				if len(point_indices) == 1:
 					first_child, second_child = self.__single_point_crossover(parents[0], parents[1], point_indices[0])
 				elif len(point_indices) >= 2:
@@ -209,55 +210,58 @@ class genetic_process(population):
 				print(f"\t\t▶  Generated Offspring using t-point Crossover --- {offspring}\n")
 				self.population_after_crossover = np.vstack((self.population_after_selection, np.array(offspring)))
 
-			self.population_after_crossover = np.array(offspring)
 		elif self.crossover_method == "uniform": # =====================================================================================
-			self.population_after_crossover = np.array(offspring)
-			raise NotImplementedError
-		elif self.crossover_method == "pmx": # =====================================================================================
-			self.population_after_crossover = np.array(offspring)
-			raise NotImplementedError
-		elif self.crossover_method == "ox": # =====================================================================================
-			self.population_after_crossover = np.array(offspring)
-			raise NotImplementedError
+			swap_probability  = 0.5
+			first_child       = np.zeros(self.adj_mat.shape[0], dtype=int)
+			second_child      = np.zeros(self.adj_mat.shape[0], dtype=int)
+			chromosome_length = self.adj_mat.shape[0] 
+			for g in range(chromosome_length):
+				u = random.random()
+				if u <= swap_probability:
+					first_child[g]  = parents[1][g]
+					second_child[g] = parents[0][g]
+				else:
+					first_child[g]  = parents[0][g]
+					second_child[g] = parents[1][g]
+			offspring.append(first_child)
+			offspring.append(second_child)
+			print(f"\t\t▶  Generated Offspring using uniform Crossover --- {offspring}\n")
+			self.population_after_crossover = np.vstack((self.population_after_selection, np.array(offspring)))
+
 		else:
 			raise NotImplementedError
 		print(f"\t▶  Population Shape After Crossing Over --- {self.population_after_crossover.shape}\n")
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
-
+	# 									MUTATION OPERATORS
+	
 	def __mutation(self):
 		print(f"\t▶  Mutating Offspring using {self.mutation_method} method\n")
 		offspring_after_mutation = []
 		if self.mutation_method == "swap": # =====================================================================================
 			self.population_after_mutation = np.array(offspring_after_mutation)
-			raise NotImplementedError # TODO
 		elif self.mutation_method == "creep": # =====================================================================================
 			self.population_after_mutation = np.array(offspring_after_mutation)
-			raise NotImplementedError # TODO
 		elif self.mutation_rate == "interchanging": # =====================================================================================
 			self.population_after_mutation = np.array(offspring_after_mutation)
-			raise NotImplementedError # TODO
 		elif self.mutation_rate == "reversing": # =====================================================================================
 			self.population_after_mutation = np.array(offspring_after_mutation)
-			raise NotImplementedError # TODO
 		else:
 			raise NotImplementedError
 		print(f"\t▶  Population Shape After Mutation --- {self.population_after_crossover.shape}\n")
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
-	
+	# 									REPLACEMENT OPERATORS
+
 	def __replacement(self):
 		print(f"\t▶  Replcaing Old Population using {self.replacement_method} method\n")
 		population_next_generation = []
 		if self.replacement_method == "generational_elitism":
 			self.population = np.array(population_next_generation)
-			raise NotImplementedError # TODO
 		elif self.replacement_method == "generational_gap":
 			self.population = np.array(population_next_generation)
-			raise NotImplementedError # TODO
 		elif self.replacement_method == "steady_state":
 			self.population = np.array(population_next_generation)
-			raise NotImplementedError # TODO
 		else:
 			raise NotImplementedError
 		print(f"\t▶  Population Shape After Replacement --- {self.population.shape}\n")
