@@ -26,4 +26,12 @@ python colory.py --adj-mat utils/adj_mat.txt --colors o r b --chromosomes 50 --g
 
 #### 📌 Encoding
 
+#### 📌 Generating Initial Population
+
 #### 📌 Objective functions
+
+#### 📌 Optimization
+
+#### 📌 Genetic Operators
+
+#### 📌 Stopping Criterion
