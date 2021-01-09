@@ -93,7 +93,7 @@ class population:
 
 # ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
-class genetic_process(population):
+class genetic_process():
 	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, replacement_method, mutation_rate, crossover_rate):
 		self.adj_mat = population.get_adj_mat()
 		self.colors = population.get_colors()
@@ -126,7 +126,7 @@ class genetic_process(population):
 			# =================== GA Operators ===================
 			self.__selection() # select best chromosomes as parents
 			self.__crossover() # parents mating pool
-			# self.__mutation() # mutating genes
+			self.__mutation() # mutating genes
 			# self.__replacement() # replacing old population
 			# ====================================================
 			self.best_chromosomes.append(self.genes_population_after_fitness[0])
@@ -138,39 +138,43 @@ class genetic_process(population):
 	def __selection(self):
 		print(f"\t▶  Generating Parents Population using {self.selection_method} method\n")
 		population_after_selection = []
-		if self.selection_method == "roulette_wheel": # =====================================================================================
-			fitness_population = sum([c.fitness(self.adj_mat, self.colors) for c in self.population]) # sum of all scores (fitnesses)
-			individual_expected_values = [(1/c.fitness(self.adj_mat, self.colors))/fitness_population for c in self.population] # all chromosomes prob (exprected values) - we scaled up every chromosome fitness cause big roulette of the wheel belongs to minimum fitnesses 
-			cum_prob = [sum(individual_expected_values[:i+1]) for i in range(len(individual_expected_values))] # cumulative sum of chromosomes exprected values (prob)
-			for i in range(self.parents):
-				r = random.random()
-				if cum_prob[i] >= r: # add this chromosome only if its cum_prob is greater than the generated random number
-					population_after_selection.append(self.population[i].genes)
-			self.population_after_selection = np.array(population_after_selection) # parents population
-		
-		elif self.selection_method == "rank": # =====================================================================================
-			for p in range(self.parents): # the first self.parents chromosomes are the best ones
-				population_after_selection.append(self.genes_population_after_fitness[p])
-			self.population_after_selection = np.array(population_after_selection) # parents population
-		
-		elif self.selection_method == "tournament": # =====================================================================================
-			k = int(np.log2(len(self.chromosome_objects_population)))
-			population_after_tournament = []
-			for _ in range(len(self.chromosome_objects_population)):
-				tournament_population = random.sample(self.chromosome_objects_population, k)
-				tournament_population_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in tournament_population])
-				indices = np.argsort(tournament_population_fitness_scores)
-				sorted_tournament_population_based_on_fitness_scores = [tournament_population[idx] for idx in indices]
-				population_after_tournament.append(sorted_tournament_population_based_on_fitness_scores[0])
-			population_after_tournament_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in population_after_tournament])
-			indices = np.argsort(population_after_tournament_fitness_scores)
-			sorted_population_after_tournament = [population_after_tournament[idx] for idx in indices]
-			for p in range(self.parents):
-				population_after_selection.append(sorted_population_after_tournament[p].genes)
-			self.population_after_selection = np.array(population_after_selection) # parents population
+		if self.parents <= self.genes_population_after_fitness.shape[0]: # check that the number of parents is smaller than the total population
+			if self.selection_method == "roulette_wheel": # =====================================================================================
+				fitness_population = sum([c.fitness(self.adj_mat, self.colors) for c in self.population]) # sum of all scores (fitnesses)
+				individual_expected_values = [(1/c.fitness(self.adj_mat, self.colors))/fitness_population for c in self.population] # all chromosomes prob (exprected values) - we scaled up every chromosome fitness cause big roulette of the wheel belongs to minimum fitnesses 
+				cum_prob = [sum(individual_expected_values[:i+1]) for i in range(len(individual_expected_values))] # cumulative sum of chromosomes exprected values (prob)
+				for i in range(self.parents):
+					r = random.random()
+					if cum_prob[i] >= r: # add this chromosome only if its cum_prob is greater than the generated random number
+						population_after_selection.append(self.population[i].genes)
+				self.population_after_selection = np.array(population_after_selection) # parents population
+				
+			
+			elif self.selection_method == "rank": # =====================================================================================
+				for p in range(self.parents): # the first self.parents chromosomes are the best ones
+					population_after_selection.append(self.genes_population_after_fitness[p])
+				self.population_after_selection = np.array(population_after_selection) # parents population
+			
+			elif self.selection_method == "tournament": # =====================================================================================
+				k = int(np.log2(len(self.chromosome_objects_population)))
+				population_after_tournament = []
+				for _ in range(len(self.chromosome_objects_population)):
+					tournament_population = random.sample(self.chromosome_objects_population, k)
+					tournament_population_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in tournament_population])
+					indices = np.argsort(tournament_population_fitness_scores)
+					sorted_tournament_population_based_on_fitness_scores = [tournament_population[idx] for idx in indices]
+					population_after_tournament.append(sorted_tournament_population_based_on_fitness_scores[0])
+				population_after_tournament_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in population_after_tournament])
+				indices = np.argsort(population_after_tournament_fitness_scores)
+				sorted_population_after_tournament = [population_after_tournament[idx] for idx in indices]
+				for p in range(self.parents):
+					population_after_selection.append(sorted_population_after_tournament[p].genes)
+				self.population_after_selection = np.array(population_after_selection) # parents population
+			else:
+				raise NotImplementedError
+			print(f"\t▶  Population Shape After Selection --- {self.population_after_selection.shape}\n")
 		else:
-			raise NotImplementedError
-		print(f"\t▶  Population Shape After Selection --- {self.population_after_selection.shape}\n")
+			raise ValueError("\t❌ number of parents is greater than the total population")
 	
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
@@ -189,7 +193,7 @@ class genetic_process(population):
 	# 									CROSSOVER OPERATORS
 	
 	def __crossover(self):
-		print(f"\t▶  Mating Parents using {self.crossover_method} method\n")
+		# print(f"\t▶  Mating Parents using {} method\n")
 		parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2)
 		parents         = self.population_after_selection[parents_indices]
 		print(f"\t▶  Selected Parents to Mate --- {list(parents)}\n")
@@ -199,33 +203,42 @@ class genetic_process(population):
 			if points > self.adj_mat.shape[0]-2:
 				raise ValueError("\t❌ the point is too large")
 			else:
+				do_cross = random.random() <= self.crossover_rate
 				point_indices   = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines
 				print(f"\t\t▶  Point Indices --- {point_indices}\n")
-				if len(point_indices) == 1:
+				if len(point_indices) == 1 and do_cross:
 					first_child, second_child = self.__single_point_crossover(parents[0], parents[1], point_indices[0])
-				elif len(point_indices) >= 2:
+				elif len(point_indices) >= 2 and do_cross:
 					first_child, second_child = self.__multi_point_crossover(parents[0], parents[1], point_indices)
+				else:
+					first_child, second_child = parents[1], parents[0]  
 				offspring.append(first_child)
 				offspring.append(second_child)
-				print(f"\t\t▶  Generated Offspring using t-point Crossover --- {offspring}\n")
+				_msg = "Generated" if do_cross else "No Need to Generate" 
+				print(f"\t\t▶  {_msg} Offspring using t-point Crossover --- {offspring}\n")
 				self.population_after_crossover = np.vstack((self.population_after_selection, np.array(offspring)))
 
 		elif self.crossover_method == "uniform": # =====================================================================================
+			do_cross 		  = random.random() <= self.crossover_rate
 			swap_probability  = 0.5
 			first_child       = np.zeros(self.adj_mat.shape[0], dtype=int)
 			second_child      = np.zeros(self.adj_mat.shape[0], dtype=int)
 			chromosome_length = self.adj_mat.shape[0] 
-			for g in range(chromosome_length):
-				u = random.random()
-				if u <= swap_probability:
-					first_child[g]  = parents[1][g]
-					second_child[g] = parents[0][g]
-				else:
-					first_child[g]  = parents[0][g]
-					second_child[g] = parents[1][g]
+			if do_cross:
+				for g in range(chromosome_length):
+					u = random.random()
+					if u <= swap_probability:
+						first_child[g]  = parents[1][g]
+						second_child[g] = parents[0][g]
+					else:
+						first_child[g]  = parents[0][g]
+						second_child[g] = parents[1][g]
+			else:
+				first_child, second_child = parents[1], parents[0]
 			offspring.append(first_child)
 			offspring.append(second_child)
-			print(f"\t\t▶  Generated Offspring using uniform Crossover --- {offspring}\n")
+			_msg = "Generated" if do_cross else "No Need to Generate" 
+			print(f"\t\t▶  {_msg} Offspring using uniform Crossover --- {offspring}\n")
 			self.population_after_crossover = np.vstack((self.population_after_selection, np.array(offspring)))
 
 		else:
@@ -236,18 +249,58 @@ class genetic_process(population):
 	# 									MUTATION OPERATORS
 	
 	def __mutation(self):
-		print(f"\t▶  Mutating Offspring using {self.mutation_method} method\n")
+		# print(f"\t▶  Mutating Offspring using {self.mutation_method} method\n")
 		offspring_after_mutation = []
-		if self.mutation_method == "swap": # =====================================================================================
-			self.population_after_mutation = np.array(offspring_after_mutation)
-		elif self.mutation_method == "creep": # =====================================================================================
-			self.population_after_mutation = np.array(offspring_after_mutation)
-		elif self.mutation_rate == "interchanging": # =====================================================================================
-			self.population_after_mutation = np.array(offspring_after_mutation)
-		elif self.mutation_rate == "reversing": # =====================================================================================
-			self.population_after_mutation = np.array(offspring_after_mutation)
-		else:
-			raise NotImplementedError
+		for p in range(self.population_after_crossover.shape[0]):
+			do_mutate                  = random.random() <= self.mutation_rate
+			offspring_before_mutation  = self.population_after_crossover[p]
+			print(f"\t\t▶  Offspring Before {self.mutation_method} --- {offspring_before_mutation}")
+			# ==========================================================================
+			# 									SWAP
+			if self.mutation_method == "swap":
+				locuses               = random.sample(range(self.adj_mat.shape[0]), 2)
+				print(f"\t\t▶  First Locus --- {locuses[0]}")
+				print(f"\t\t▶  Second Locus --- {locuses[1]}")
+				first_gene_allele     = self.population_after_crossover[p][locuses[0]]
+				print(f"\t\t▶  First Allele --- {first_gene_allele}")
+				second_gene_allele    = self.population_after_crossover[p][locuses[1]]
+				print(f"\t\t▶  Second Allele --- {second_gene_allele}")
+				if do_mutate:
+					self.population_after_crossover[p][locuses[0]] = second_gene_allele
+					self.population_after_crossover[p][locuses[1]] = first_gene_allele
+				else:	
+					pass
+			# ==========================================================================
+			# 									CREEP
+			elif self.mutation_method == "creep":
+				locus                  = random.sample(range(self.adj_mat.shape[0]), 1)
+				print(f"\t\t▶  Selected Locus --- {locus[0]}")
+				selected_gene_allele   = self.population_after_crossover[p][locus[0]]
+				print(f"\t\t▶  Selected Gene Allele --- {selected_gene_allele}")
+				if do_mutate:
+					self.population_after_crossover[p][locus[0]] = random.sample(range(self.colors.shape[0]), 1)[0]
+				else: pass
+			# ==========================================================================
+			# 								   INVERSION
+			elif self.mutation_method == "inversion":
+				inversion_indices = random.sample(list(self.population_after_crossover[p]), 2)
+				print(f"\t\t▶  Inversion Indices --- {inversion_indices}")
+				selected_genes_allele    = list(self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]])
+				print(f"\t\t▶  Selected Genes --- {selected_genes_allele}")
+				inverted_genes_allele    = selected_genes_allele.reverse()
+				print(f"\t\t▶  Inverted Genes --- {inverted_genes_allele}")
+				if do_mutate:
+					self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]] = inverted_genes_allele
+				else: pass
+			# ==========================================================================
+			else:
+				raise NotImplementedError
+			# ==========================================================================
+			_msg = "Mutated" if do_mutate else "No Need to Mutate"
+			print(f"\t\t▶  {_msg} Offspring using {self.mutation_method} Mutation --- {self.population_after_crossover[p]}")
+			print("\t\t——————————————————————————————\n")
+			offspring_after_mutation.append(self.population_after_crossover[p])
+		self.population_after_mutation = np.array(offspring_after_mutation)
 		print(f"\t▶  Population Shape After Mutation --- {self.population_after_crossover.shape}\n")
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
