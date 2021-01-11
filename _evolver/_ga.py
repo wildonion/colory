@@ -159,7 +159,7 @@ class genetic_process():
 				k = int(np.log2(len(self.chromosome_objects_population)))
 				population_after_tournament = []
 				for _ in range(len(self.chromosome_objects_population)):
-					tournament_population = random.sample(self.chromosome_objects_population, k)
+					tournament_population = random.sample(self.chromosome_objects_population, k) # non repetitive indices
 					tournament_population_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in tournament_population])
 					indices = np.argsort(tournament_population_fitness_scores)
 					sorted_tournament_population_based_on_fitness_scores = [tournament_population[idx] for idx in indices]
@@ -194,7 +194,7 @@ class genetic_process():
 	
 	def __crossover(self):
 		# print(f"\t▶  Mating Parents using {} method\n")
-		parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2)
+		parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2) # non repetitive indices
 		parents         = self.population_after_selection[parents_indices]
 		print(f"\t▶  Selected Parents to Mate --- {list(parents)}\n")
 		offspring = []
@@ -204,7 +204,7 @@ class genetic_process():
 				raise ValueError("\t❌ the point is too large")
 			else:
 				do_cross = random.random() <= self.crossover_rate
-				point_indices   = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines
+				point_indices   = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines - non repetitive indices
 				print(f"\t\t▶  Point Indices --- {point_indices}\n")
 				if len(point_indices) == 1 and do_cross:
 					first_child, second_child = self.__single_point_crossover(parents[0], parents[1], point_indices[0])
@@ -258,7 +258,7 @@ class genetic_process():
 			# ==========================================================================
 			# 									SWAP
 			if self.mutation_method == "swap":
-				locuses               = random.sample(range(self.adj_mat.shape[0]), 2)
+				locuses               = random.sample(range(self.adj_mat.shape[0]), 2) # non repetitive indices
 				print(f"\t\t▶  First Locus --- {locuses[0]}")
 				print(f"\t\t▶  Second Locus --- {locuses[1]}")
 				first_gene_allele     = self.population_after_crossover[p][locuses[0]]
@@ -273,17 +273,17 @@ class genetic_process():
 			# ==========================================================================
 			# 									CREEP
 			elif self.mutation_method == "creep":
-				locus                  = random.sample(range(self.adj_mat.shape[0]), 1)
+				locus                  = random.sample(range(self.adj_mat.shape[0]), 1) # non repetitive indices
 				print(f"\t\t▶  Selected Locus --- {locus[0]}")
 				selected_gene_allele   = self.population_after_crossover[p][locus[0]]
 				print(f"\t\t▶  Selected Gene Allele --- {selected_gene_allele}")
 				if do_mutate:
-					self.population_after_crossover[p][locus[0]] = random.sample(range(self.colors.shape[0]), 1)[0]
+					self.population_after_crossover[p][locus[0]] = random.sample(range(self.colors.shape[0]), 1)[0] # non repetitive indices
 				else: pass
 			# ==========================================================================
 			# 								   INVERSION
 			elif self.mutation_method == "inversion":
-				inversion_indices = random.sample(list(self.population_after_crossover[p]), 2)
+				inversion_indices = random.sample(list(self.population_after_crossover[p]), 2) # non repetitive indices
 				print(f"\t\t▶  Inversion Indices --- {inversion_indices}")
 				selected_genes_allele    = list(self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]])
 				print(f"\t\t▶  Selected Genes --- {selected_genes_allele}")
@@ -311,7 +311,7 @@ class genetic_process():
 		population_next_generation = []
 		if self.replacement_method == "generational_elitism":
 			self.population = np.array(population_next_generation)
-		elif self.replacement_method == "generational_gap":
+		elif self.replacement_method == "alpha_generational":
 			self.population = np.array(population_next_generation)
 		elif self.replacement_method == "steady_state":
 			self.population = np.array(population_next_generation)
