@@ -1,6 +1,3 @@
-
-
-
 import networkx as nx
 import plotly.graph_objects as go
 import numpy as np
@@ -283,11 +280,15 @@ class genetic_process():
 			# ==========================================================================
 			# 								   INVERSION
 			elif self.mutation_method == "inversion":
+<<<<<<< HEAD
 				inversion_indices = random.sample(list(self.population_after_crossover[p]), 2) # non repetitive indices
+=======
+				inversion_indices = random.sample(range(self.population_after_crossover[p].shape[0]), 2)
+>>>>>>> origin/main
 				print(f"\t\t▶  Inversion Indices --- {inversion_indices}")
-				selected_genes_allele    = list(self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]])
+				selected_genes_allele    = self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]]
 				print(f"\t\t▶  Selected Genes --- {selected_genes_allele}")
-				inverted_genes_allele    = selected_genes_allele.reverse()
+				inverted_genes_allele    = selected_genes_allele[::-1]
 				print(f"\t\t▶  Inverted Genes --- {inverted_genes_allele}")
 				if do_mutate:
 					self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]] = inverted_genes_allele
