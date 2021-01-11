@@ -52,7 +52,7 @@ parser.add_argument('--parents', action='store', type=int, help='The number of p
 parser.add_argument('--selection-method', action='store', type=str, help='Selection method for crossover operation (roulette_wheel, tournament or rank).', required=True)
 parser.add_argument('--crossover-method', action='store', type=str, help='Crossover method to generate offspring (n_point[where n is an integer] or uniform).', required=True)
 parser.add_argument('--mutation-method', action='store', type=str, help='Mutation method to mutate offspring (swap, creep or inversion).', required=True)
-parser.add_argument('--replacement-method', action='store', type=str, help='Replacement method to replace the old population (generational_elitism, generational_gap, or steady_state).', required=True)
+parser.add_argument('--replacement-method', action='store', type=str, help='Replacement method to replace the old population (generational_elitism, alpha_generational, or steady_state).', required=True)
 parser.add_argument('--mutation-rate', action='store', type=float, help='Mutation rate (between 0.01 and 0.05 based on 20 <= chromosomes <= 30). You can use 1/chromosomes to setup the ratio.', required=True)
 parser.add_argument('--crossover-rate', action='store', type=float, help='Crossover rate (between 0.75 and 0.95 based on 20 <= chromosomes <= 30).', required=True)
 args = parser.parse_args()
@@ -136,6 +136,30 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 		best_fitness_scores = app.best_fitness_scores # all best fitness scores in every generation
 
 
+
+		# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+		# 	   genetic process public attributes
+
+
+		# app.adj_mat = population.get_adj_mat()
+		# app.colors = population.get_colors()
+		# app.generations = generations
+		# app.population = population
+		# app.parents = parents
+		# app.mutation_rate = mutation_rate
+		# app.crossover_rate = crossover_rate
+		# app.selection_method = selection_method
+		# app.crossover_method = crossover_method
+		# app.mutation_method = mutation_method
+		# app.replacement_method = replacement_method
+		# app.genes_population_after_fitness = None
+		# app.population_after_selection = None
+		# app.population_after_crossover = None
+		# app.population_after_mutation = None
+		# app.best_chromosomes = []
+		# app.best_fitness_scores = []
+
+		# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 
 
