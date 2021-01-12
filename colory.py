@@ -18,7 +18,7 @@
 |
 | USAGE : 
 |			python colory.py --adj-mat utils/adj_mat.txt --colors o r b \
-|							 --chromosomes 50 --generations 15 --parents 30 \
+|							 --chromosomes 50 --generations 20 --parents 30 \
 |							 --selection-method tournament --crossover-method 3_point \
 |							 --mutation-method creep --replacement-method generational_elitism \
 |							 --mutation-rate 0.20 --crossover-rate 0.80
@@ -167,7 +167,7 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 	# ------------ logging statistical infos of the genetic process  
 	# ------------------------------------------------------------------
 	for i in range(len(best_fitness_scores)):
-		print(f"\t🔬 Generation {i} Chromosome --- {best_chromosomes[i]}")
+		print(f"\t🔬 Generation {i+1} Chromosome --- {best_chromosomes[i]}")
 	print()
 	print('\t▶ Average accepted score                   = ', np.mean(best_fitness_scores))
 	print('\t▶ Median score for accepted fitness scores = ', np.median(best_fitness_scores))
