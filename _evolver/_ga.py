@@ -320,7 +320,7 @@ class genetic_process():
 	
 	def plot(self):
 		fig = go.Figure()
-		fig.add_trace(go.Scatter(self.best_fitness_scores, mode='lines', name='Fitness Generation'))
+		fig.add_trace(go.Scatter(x=np.arange(1, self.generations+1), y=self.best_fitness_scores, mode='lines', name='Fitness Generation'))
 		fig.update_xaxes(title_text='Generation')
 		fig.update_yaxes(title_text='Best Fitness')
 		fig.show()
