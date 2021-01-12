@@ -20,7 +20,7 @@
 |			python colory.py --adj-mat utils/adj_mat.txt --colors o r b \
 |							 --chromosomes 50 --generations 20 --parents 30 \
 |							 --selection-method tournament --crossover-method 3_point \
-|							 --mutation-method creep --replacement-method generational_elitism \
+|							 --mutation-method creep --alpha-rate 0.20 \
 |							 --mutation-rate 0.20 --crossover-rate 0.80
 |			
 |
@@ -52,7 +52,7 @@ parser.add_argument('--parents', action='store', type=int, help='The number of p
 parser.add_argument('--selection-method', action='store', type=str, help='Selection method for crossover operation (roulette_wheel, tournament or rank).', required=True)
 parser.add_argument('--crossover-method', action='store', type=str, help='Crossover method to generate offspring (n_point[where n is an integer] or uniform).', required=True)
 parser.add_argument('--mutation-method', action='store', type=str, help='Mutation method to mutate offspring (swap, creep or inversion).', required=True)
-parser.add_argument('--replacement-method', action='store', type=str, help='Replacement method to replace the old population (generational_elitism, alpha_generational, or steady_state).', required=True)
+parser.add_argument('--alpha-rate', action='store', type=float, help='Alpha rate for replacing the old population.', required=True)
 parser.add_argument('--mutation-rate', action='store', type=float, help='Mutation rate (between 0.01 and 0.05 based on 20 <= chromosomes <= 30). You can use 1/chromosomes to setup the ratio.', required=True)
 parser.add_argument('--crossover-rate', action='store', type=float, help='Crossover rate (between 0.75 and 0.95 based on 20 <= chromosomes <= 30).', required=True)
 args = parser.parse_args()
@@ -126,7 +126,7 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 	else: # create a genetic process
 		print(f"\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗finding minimum valid colors for each node through a genetic process‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗\n")
 		app = genetic_process(generations=args.generations, population=pop, parents=args.parents, selection_method=args.selection_method, 
-						  	  crossover_method=args.crossover_method, mutation_method=args.mutation_method, replacement_method=args.replacement_method,
+						  	  crossover_method=args.crossover_method, mutation_method=args.mutation_method, alpha_rate=args.alpha_rate,
 						  	  mutation_rate=args.mutation_rate, crossover_rate=args.crossover_rate)
 		app.run() # run the process
 		app.save() # save best chromosomes and fitness scores
@@ -151,7 +151,7 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 		# app.selection_method = selection_method
 		# app.crossover_method = crossover_method
 		# app.mutation_method = mutation_method
-		# app.replacement_method = replacement_method
+		# app.alpha_rate = alpha_rate
 		# app.genes_population_after_fitness = None
 		# app.population_after_selection = None
 		# app.population_after_crossover = None

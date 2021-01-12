@@ -91,7 +91,7 @@ class population:
 # ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 class genetic_process():
-	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, replacement_method, mutation_rate, crossover_rate):
+	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, alpha_rate, mutation_rate, crossover_rate):
 		self.adj_mat = population.get_adj_mat()
 		self.colors = population.get_colors()
 		self.generations = generations
@@ -102,7 +102,7 @@ class genetic_process():
 		self.selection_method = selection_method
 		self.crossover_method = crossover_method
 		self.mutation_method = mutation_method
-		self.replacement_method = replacement_method
+		self.alpha_rate = alpha_rate
 		self.genes_population_after_fitness = None
 		self.population_after_selection = None
 		self.population_after_crossover = None
@@ -304,16 +304,15 @@ class genetic_process():
 	# 									REPLACEMENT OPERATORS
 
 	def __replacement(self):
-		print(f"\t▶  Replcaing Old Population using {self.replacement_method} method\n")
+		print(f"\t▶  Replcaing Old Population using {self.alpha_rate} method\n")
 		population_next_generation = []
-		if self.replacement_method == "generational_elitism":
-			self.population = np.array(population_next_generation)
-		elif self.replacement_method == "alpha_generational":
-			self.population = np.array(population_next_generation)
-		elif self.replacement_method == "steady_state":
-			self.population = np.array(population_next_generation)
-		else:
-			raise NotImplementedError
+		sides = self.alpha_rate.split("_")
+		if sides[1] == "elitism" # generational elitism
+			pass
+		elif sides[1] == "state": # steady state
+			pass
+		else: # generational gap or alpha generational
+			pass
 		print(f"\t▶  Population Shape After Replacement --- {self.population.shape}\n")
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
