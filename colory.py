@@ -19,8 +19,8 @@
 | USAGE : 
 |			python colory.py --adj-mat utils/adj_mat.txt --colors o r b \
 |							 --chromosomes 50 --generations 20 --parents 30 \
-|							 --selection-method tournament --crossover-method 3_point \
-|							 --mutation-method creep --alpha-rate 0.20 \
+|							 --selection-method tournament --crossover-method 3-point \
+|							 --mutation-method creep --alpha-rate 20 \
 |							 --mutation-rate 0.20 --crossover-rate 0.80
 |			
 |
@@ -64,11 +64,12 @@ args = parser.parse_args()
 
 # ------------ defining the paths and building adjacency matrix
 # -------------------------------------------------------------------------
-BEST_CHROMOSOMES_PATH = f"best_chromo_in_{args.generations}_generations.npy"
-BEST_SCORES_PATH      = f"best_fitness_scores_in_{args.generations}_generations.npy"
-ADJ_MAT               = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
-									[x for x in row.replace('\n', '').split(" ")])))) for row in args.adj_mat.readlines()])
-COLORS                = np.array(args.colors)
+VALID_CHROMOSOMES_PATH 				  = f"valid_chromo_in_{args.generations}_generations.npy"
+MINIMUM_COLORS_VALID_CHROMOSOMES_PATH = f"minimum_colors_valid_chromo_in_{args.generations}_generations.npy"
+BEST_SCORES_PATH                      = f"best_fitness_scores_in_{args.generations}_generations.npy"
+ADJ_MAT                               = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
+													[x for x in row.replace('\n', '').split(" ")])))) for row in args.adj_mat.readlines()])
+COLORS                                = np.array(args.colors)
 
 
 
@@ -93,7 +94,7 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 
 	# ------------ initialize the population using defined arguments
 	# --------------------------------------------------------------------
-	pop = population(COLORS, args.chromosomes, ADJ_MAT)
+	pop = population(args.chromosomes, COLORS, ADJ_MAT)
 
 
 
@@ -111,10 +112,11 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 
 	# ------------ loading best chromosomes and best fitness scores
 	# --------------------------------------------------------------------
-	if os.path.exists(f"utils/+{BEST_CHROMOSOMES_PATH}") and os.path.exists(f"utils/+{BEST_SCORES_PATH}"): # load saved chromosomes and fitness scores
+	if os.path.exists(f"utils/+{VALID_CHROMOSOMES_PATH}") and os.path.exists(f"utils/+{BEST_SCORES_PATH}"): # load saved chromosomes and fitness scores
 		print(f"\n‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗loading best chromosomes and fitness scores in each generation‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗‗\n")
-		best_chromosomes = np.load(BEST_CHROMOSOMES_PATH)
+		valid_chromosomes = np.load(VALID_CHROMOSOMES_PATH)
 		best_fitness_scores = np.load(BEST_SCORES_PATH)
+		minimum_colors_valid_chromosomes = np.load(MINIMUM_COLORS_VALID_CHROMOSOMES_PATH)
 	
 
 
@@ -129,45 +131,57 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 						  	  crossover_method=args.crossover_method, mutation_method=args.mutation_method, alpha_rate=args.alpha_rate,
 						  	  mutation_rate=args.mutation_rate, crossover_rate=args.crossover_rate)
 		app.run() # run the process
-		app.save() # save best chromosomes and fitness scores
-		app.plot() # plot fitness score in each generation after finishing the process 
+		app.save() # save valid chromosomes, minimum valid chromosomes and best fitness scores
+		# app.plot() # plot fitness score in each generation after finishing the process 
 		app.draw() # draw the colored graph with best chromosome
-		best_chromosomes = app.best_chromosomes # all best chromosomes in every generation
+		valid_chromosomes = app.valid_chromosomes # all valid chromosomes in every generation
 		best_fitness_scores = app.best_fitness_scores # all best fitness scores in every generation
+		minimum_colors_valid_chromosomes = app.minimum_colors_valid_chromosomes # all minimum valid chromosomes
 
 
 
-		# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
-		# 	   genetic process public attributes
+
+		'''
+		≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+		 	 genetic process public attributes
+
+		app.adj_mat 						 = population.get_adj_mat()
+		app.colors 						     = population.get_colors()
+		app.generations 					 = generations
+		app.population 					     = population
+		app.parents 						 = parents
+		app.mutation_rate 					 = mutation_rate
+		app.crossover_rate 				  	 = crossover_rate
+		app.selection_method 				 = selection_method
+		app.crossover_method 				 = crossover_method
+		app.mutation_method 				 = mutation_method
+		app.alpha_rate 					  	 = alpha_rate
+		app.genes_population_after_fitness   = None
+		app.population_after_selection       = None
+		app.population_after_crossover       = None
+		app.population_after_mutation        = None
+		app.valid_chromosomes                = None
+		app.minimum_colors_valid_chromosomes = None
+		app.best_fitness_scores              = []
+
+		≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+		'''
 
 
-		# app.adj_mat = population.get_adj_mat()
-		# app.colors = population.get_colors()
-		# app.generations = generations
-		# app.population = population
-		# app.parents = parents
-		# app.mutation_rate = mutation_rate
-		# app.crossover_rate = crossover_rate
-		# app.selection_method = selection_method
-		# app.crossover_method = crossover_method
-		# app.mutation_method = mutation_method
-		# app.alpha_rate = alpha_rate
-		# app.genes_population_after_fitness = None
-		# app.population_after_selection = None
-		# app.population_after_crossover = None
-		# app.population_after_mutation = None
-		# app.best_chromosomes = []
-		# app.best_fitness_scores = []
-
-		# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 
 
 
 	# ------------ logging statistical infos of the genetic process  
 	# ------------------------------------------------------------------
+	for i in range(len(valid_chromosomes)):
+		print(f"\t🔬 Generation {i+1} Valid Chromosomes --- {valid_chromosomes[i]}")
+	print("\t➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤")
+	for i in range(len(minimum_colors_valid_chromosomes)):
+		print(f"\t🔬 Generation {i+1} Minimum Colors Valid Chromosomes --- {minimum_colors_valid_chromosomes[i]}")
+	print("\t➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤")
 	for i in range(len(best_fitness_scores)):
-		print(f"\t🔬 Generation {i+1} Chromosome --- {best_chromosomes[i]}")
-	print()
+		print(f"\t🔬 Generation {i+1} Best Fitness Score --- {best_fitness_scores[i]}")	
+	print("\t➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤➤")
 	print('\t▶ Average accepted score                   = ', np.mean(best_fitness_scores))
 	print('\t▶ Median score for accepted fitness scores = ', np.median(best_fitness_scores))
