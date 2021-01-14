@@ -16,11 +16,11 @@ pip install -r requirements.txt
 ## 💻 Usage
 
 ```console
-python colory.py --adj-mat utils/adj_mat.txt --colors o r b --chromosomes 50 --generations 20 --parents 30 --selection-method tournament --crossover-method 3_point --mutation-method creep --alpha-rate 0.20 --mutation-rate 0.20 --crossover-rate 0.80
+python colory.py --adj-mat utils/adj_mat.txt --colors o r b --chromosomes 50 --generations 20 --parents 30 --selection-method tournament --crossover-method 3-point --mutation-method creep --alpha-rate 20 --mutation-rate 0.20 --crossover-rate 0.80
 
 ```
 
-> ⚠️ Run `python3 colory.py --help` for argument details.
+> ⚠️ Run `python colory.py --help` for argument details.
 
 ## 📋 Procedures
 
