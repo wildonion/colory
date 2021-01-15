@@ -36,11 +36,11 @@ class chromosome:
 	def __invalid_genes_objective(self, adj_mat):
 		invalid = 0
 		for i in range(self.gene_objects.shape[0]):
-			next_index = (i+1)%self.gene_objects.shape[0]
-			if next_index != 0 and self.gene_objects[i].allele == self.gene_objects[next_index].allele:
-				if adj_mat[i][next_index] == 1: # there is an edge between this node and the next node
-					invalid += 1
-		if invalid == 0: self.valid = True
+			for j in range(self.gene_objects.shape[0]):
+				if self.gene_objects[i].allele == self.gene_objects[j].allele:
+					if adj_mat[i][j] == 1: # there is an edge between this node and the next node
+						invalid += 1
+		if invalid == 0: self.is_valid = True
 		return invalid
 
 
@@ -76,17 +76,20 @@ class population:
 
 	def fitness_scores(self):
 		fitness_scores = [chromosome.fitness(self.adj_mat, self.colors) for chromosome in self.pop] # all chromosomes fitness inside the generated population
-		fitness_scores, genes_population, chromosome_objects_population = np.array(fitness_scores), np.array([c.genes for c in self.pop]), self.pop
+		fitness_scores, genes_population = np.array(fitness_scores), np.array([c.genes for c in self.pop])
 		indices = np.argsort(fitness_scores)
 		ascending_fitness_scores = fitness_scores[indices]
 		ascending_genes_population_based_on_fitness_scores = genes_population[indices]
-		return ascending_fitness_scores, ascending_genes_population_based_on_fitness_scores, chromosome_objects_population
+		return ascending_fitness_scores, ascending_genes_population_based_on_fitness_scores
 
 	def __len__(self):
 		return self.pop.shape[0]
 
 	def __getitem__(self, idx):
 		return self.pop[idx]
+
+	def __call__(self):
+		return self.pop
 
 	def get_adj_mat(self):
 		return self.adj_mat
@@ -99,24 +102,25 @@ class population:
 
 class genetic_process():
 	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, alpha_rate, mutation_rate, crossover_rate):
-		self.adj_mat 						  = population.get_adj_mat()
-		self.colors 						  = population.get_colors()
-		self.generations 					  = generations
-		self.population 					  = population
-		self.parents 						  = parents
-		self.mutation_rate 					  = mutation_rate
-		self.crossover_rate 				  = crossover_rate
-		self.selection_method 				  = selection_method
-		self.crossover_method 				  = crossover_method
-		self.mutation_method 				  = mutation_method
-		self.alpha_rate 					  = alpha_rate
-		self.genes_population_after_fitness   = None
-		self.population_after_selection       = None
-		self.population_after_crossover       = None
-		self.population_after_mutation        = None
-		self.valid_chromosomes                = None
-		self.minimum_colors_valid_chromosomes = None
-		self.best_fitness_scores              = []
+		self.adj_mat 						  					= population.get_adj_mat()
+		self.colors 						  					= population.get_colors()
+		self.graph                                              = nx.from_numpy_matrix(self.adj_mat)
+		self.generations 					  					= generations
+		self.population 					  					= population
+		self.parents 						  					= parents
+		self.mutation_rate 					  					= mutation_rate
+		self.crossover_rate 				  					= crossover_rate
+		self.selection_method 				  					= selection_method
+		self.crossover_method 				  					= crossover_method
+		self.mutation_method 				  					= mutation_method
+		self.alpha_rate 					  					= alpha_rate
+		self.genes_population_after_fitness   					= None
+		self.population_after_selection       					= None
+		self.population_after_crossover       					= None
+		self.population_after_mutation        					= None
+		self.total_generations_valid_chromosomes                = [] # all none empty valid chromosomes collected from every generation
+		self.total_generations_minimum_colors_valid_chromosomes = [] # all none empty valid chromosomes with minimum colors collected from every generation
+		self.best_fitness_scores                                = []
 
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
@@ -125,21 +129,26 @@ class genetic_process():
 		for g in range(self.generations):
 			print("\n≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣\n")
 			print(f"🧬 Generation --- {g+1}")
-			fitness_scores, self.genes_population_after_fitness, self.chromosome_objects_population = self.population.fitness_scores()
-			self.valid_chromosomes                = [chromosome for chromosome in self.chromosome_objects_population if chromosome.is_valid == True]
-			self.minimum_colors_valid_chromosomes = [chromosome for chromosome in self.chromosome_objects_population if chromosome.has_min_colors == True and chromosome.is_valid == True]
+			fitness_scores, self.genes_population_after_fitness = self.population.fitness_scores()
+			self.best_fitness_scores.append(fitness_scores[0])
+			valid_chromo_in_this_generation     = np.array([chromosome.genes for chromosome in self.population() if chromosome.is_valid == True])
+			min_valid_chromo_in_this_generation = np.array([chromosome.genes for chromosome in self.population() if chromosome.has_min_colors == True and chromosome.is_valid == True]) # a list of all best chromosomes in the world!
+			if valid_chromo_in_this_generation.size != 0:
+				self.total_generations_valid_chromosomes.append(valid_chromo_in_this_generation) # total valid chromosomes in one generation
+			if min_valid_chromo_in_this_generation.size != 0:
+				self.total_generations_minimum_colors_valid_chromosomes.append(min_valid_chromo_in_this_generation) # total valid chromosomes which have minimum colors in one generation
 			print(f"\t▶  Population Shape --- {self.genes_population_after_fitness.shape}\n")
-			print(f"\t▶  Best Fitness Scores of Two First Chromosomes --- {fitness_scores[:2]}\n") # minimum fitness scores are the best ones
-			print(f"\t▶  Valid Chromosomes in This Generation --- {self.valid_chromosomes}\n")
-			print(f"\t▶  Valid Chromosomes with Minimum Colors in This Generation --- {self.minimum_colors_valid_chromosomes}\n")
+			print(f"\t▶  Best Fitness Scores of Two First Sorted Chromosomes --- {fitness_scores[:2]}\n") # minimum fitness scores are the best ones
+			print(f"\t▶  Total Valid Chromosomes in this Generation --- {valid_chromo_in_this_generation.shape}\n")
+			print(f"\t▶  Total Valid Chromosomes with Minimum Colors in this Generation --- {min_valid_chromo_in_this_generation.shape}\n")
 			# =================== GA Operators ===================
 			self.__selection() # select best chromosomes as parents
 			self.__crossover() # parents mating pool
 			self.__mutation() # mutating genes
 			self.__replacement() # replacing old population
 			# ====================================================
-			self.valid_chromosomes.append(self.genes_population_after_fitness[0])
-			self.best_fitness_scores.append(fitness_scores[0])
+		self.total_generations_valid_chromosomes                = np.array(self.total_generations_valid_chromosomes, dtype=object)
+		self.total_generations_minimum_colors_valid_chromosomes = np.array(self.total_generations_minimum_colors_valid_chromosomes, dtype=object)
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 	# 									SELECTION OPERATORS
@@ -148,7 +157,8 @@ class genetic_process():
 		print(f"\t▶  Generating Parents Population using {self.selection_method} Method\n")
 		population_after_selection = []
 		# ==========================================================================
-			#								ROULETTE WHEEL
+		#								ROULETTE WHEEL
+		
 		if self.parents <= self.genes_population_after_fitness.shape[0]: # check that the number of parents is smaller than the total population
 			if self.selection_method == "roulette_wheel":
 				fitness_population = sum([c.fitness(self.adj_mat, self.colors) for c in self.population]) # sum of all scores (fitnesses)
@@ -162,6 +172,7 @@ class genetic_process():
 				
 			# ==========================================================================
 			#								  RANK
+			
 			elif self.selection_method == "rank":
 				for p in range(self.parents): # the first self.parents chromosomes are the best ones
 					population_after_selection.append(self.genes_population_after_fitness[p])
@@ -169,11 +180,12 @@ class genetic_process():
 			
 			# ==========================================================================
 			#								TOURNAMENT
+			
 			elif self.selection_method == "tournament":
-				k = int(np.log2(len(self.chromosome_objects_population)))
+				k = int(np.log2(len(self.population())))
 				population_after_tournament = []
-				for _ in range(len(self.chromosome_objects_population)):
-					tournament_population = random.sample(self.chromosome_objects_population, k) # non repetitive indices
+				for _ in range(len(self.population())):
+					tournament_population = random.sample(self.population(), k) # none repetitive k indices with uniform probability
 					tournament_population_fitness_scores = np.array([c.fitness(self.adj_mat, self.colors) for c in tournament_population])
 					indices = np.argsort(tournament_population_fitness_scores)
 					sorted_tournament_population_based_on_fitness_scores = [tournament_population[idx] for idx in indices]
@@ -207,19 +219,20 @@ class genetic_process():
 	# 									CROSSOVER OPERATORS
 	
 	def __crossover(self):
-		parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2) # non repetitive indices
+		parents_indices = random.sample(range(self.population_after_selection.shape[0]), 2) # none repetitive indices
 		parents         = self.population_after_selection[parents_indices]
 		print(f"\t▶  Selected Parents to Mate --- {list(parents)}\n")
 		offspring = []
 		# ==========================================================================
-		#								T-POINT 
+		#								T-POINT
+		
 		if "point" in self.crossover_method:
 			points = int(self.crossover_method.split("-")[0]) # point to crossover
 			if points > self.adj_mat.shape[0]-2:
 				raise ValueError("\t❌ the point is too large")
 			else:
 				do_cross = random.random() <= self.crossover_rate
-				point_indices   = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines - non repetitive indices
+				point_indices   = random.sample(range(self.adj_mat.shape[0]), points) # getting random crossover lines - none repetitive indices
 				print(f"\t\t▶  Point Indices --- {point_indices}\n")
 				if len(point_indices) == 1 and do_cross:
 					first_child, second_child = self.__single_point_crossover(parents[0], parents[1], point_indices[0])
@@ -234,6 +247,7 @@ class genetic_process():
 				self.population_after_crossover = np.vstack((self.population_after_selection, np.array(offspring)))
 		# ==========================================================================
 		#								UNIFORM
+		
 		elif self.crossover_method == "uniform":
 			do_cross 		  = random.random() <= self.crossover_rate
 			swap_probability  = 0.5
@@ -273,14 +287,15 @@ class genetic_process():
 			print(f"\t\t▶  Offspring Before {self.mutation_method} --- {offspring_before_mutation}")
 			# ==========================================================================
 			# 									SWAP
+			
 			if self.mutation_method == "swap":
-				locuses               = random.sample(range(self.adj_mat.shape[0]), 2) # non repetitive indices
+				locuses               = random.sample(range(self.adj_mat.shape[0]), 2) # none repetitive indices
 				print(f"\t\t▶  First Locus --- {locuses[0]}")
 				print(f"\t\t▶  Second Locus --- {locuses[1]}")
 				first_gene_allele     = self.population_after_crossover[p][locuses[0]]
 				print(f"\t\t▶  First Allele --- {first_gene_allele}")
 				second_gene_allele    = self.population_after_crossover[p][locuses[1]]
-				print(f"\t\t▶  Second Allele --- {second_gene_allele}")
+				print(f"\t\t▶  Second Allele --- {second_gene_allele}\n")
 				if do_mutate:
 					self.population_after_crossover[p][locuses[0]] = second_gene_allele
 					self.population_after_crossover[p][locuses[1]] = first_gene_allele
@@ -288,23 +303,25 @@ class genetic_process():
 					pass
 			# ==========================================================================
 			# 									CREEP
+			
 			elif self.mutation_method == "creep":
-				locus                  = random.sample(range(self.adj_mat.shape[0]), 1)[0] # non repetitive indices
+				locus                  = random.sample(range(self.adj_mat.shape[0]), 1)[0] # none repetitive indices
 				print(f"\t\t▶  Selected Locus --- {locus}")
 				selected_gene_allele   = self.population_after_crossover[p][locus]
-				print(f"\t\t▶  Selected Gene Allele --- {selected_gene_allele}")
+				print(f"\t\t▶  Selected Gene Allele --- {selected_gene_allele}\n")
 				if do_mutate:
-					self.population_after_crossover[p][locus] = random.sample(range(self.colors.shape[0]), 1)[0] # non repetitive indices
+					self.population_after_crossover[p][locus] = random.sample(range(self.colors.shape[0]), 1)[0] # none repetitive indices
 				else: pass
 			# ==========================================================================
 			# 								   INVERSION
+			
 			elif self.mutation_method == "inversion":
-				inversion_indices = np.sort(random.sample(range(self.population_after_crossover[p].shape[0]), 2)) # non repetitive indices
+				inversion_indices = np.sort(random.sample(range(self.population_after_crossover[p].shape[0]), 2)) # none repetitive indices
 				print(f"\t\t▶  Inversion Indices --- {inversion_indices}")
 				selected_genes_allele    = self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]]
 				print(f"\t\t▶  Selected Genes --- {selected_genes_allele}")
 				inverted_genes_allele    = selected_genes_allele[::-1]
-				print(f"\t\t▶  Inverted Genes --- {inverted_genes_allele}")
+				print(f"\t\t▶  Inverted Genes --- {inverted_genes_allele}\n")
 				if do_mutate:
 					self.population_after_crossover[p][inversion_indices[0]:inversion_indices[1]] = inverted_genes_allele
 				else: pass
@@ -326,6 +343,7 @@ class genetic_process():
 		print(f"\t▶  Replcaing with {self.alpha_rate} ratio\n")
 		# ==========================================================================
 		#								   STEADY STATE
+		
 		if self.alpha_rate == 1.:
 			print(f"\t▶  Steady State Method is Selected")
 			index                             = random.sample(range(self.population_after_mutation.shape[0]), 1)[0]
@@ -340,31 +358,33 @@ class genetic_process():
 			print(f"\t\t▶  Random Selected Chromosome Fitness --- {random_mutated_chromosome_fitness}")
 			if random_mutated_chromosome_fitness >= worst_chromosome_fitness:
 				self.genes_population_after_fitness[-1] = random_mutated_chromosome
-				print(f"\t\t▶  Replced Worst Chromosome with Random Selected Chromosome --- {self.genes_population_after_fitness[-1]}")
+				print(f"\t\t▶  Replced Worst Chromosome with Random Selected Chromosome --- {self.genes_population_after_fitness[-1]}\n")
 			else:
-				print(f"\t\t▶  No Need to Use Steady State Replacement Method")
+				print(f"\t\t▶  No Need to Use Steady State Replacement Method\n")
 			np.random.shuffle(self.genes_population_after_fitness)
 			self.population = population(colors=self.colors, adj_mat=self.adj_mat, chromosomes=self.genes_population_after_fitness)
 		# ==========================================================================
-		#									GENERATIONAL	
+		#									GENERATIONAL
+		
 		elif self.alpha_rate == 100.:
-			print(f"\t▶  Generational+Elitism Method is Selected")
+			print(f"\t▶  Generational+Elitism Method is Selected\n")
 			old_population_best_chromosome = self.genes_population_after_fitness[0]
 			population_next_generation = np.vstack((self.population_after_mutation, old_population_best_chromosome))
 			self.population = population(colors=self.colors, adj_mat=self.adj_mat, chromosomes=population_next_generation)
 		# ==========================================================================
 		#								  GENERATIONAL GAP
+		
 		else:
 			print(f"\t▶  Generational Gap Method is Selected")
 			number_of_random_indices = random.sample(range(self.population_after_mutation.shape[0]), int(self.alpha_rate/100 * self.population_after_mutation.shape[0]))
 			print(f"\t\t▶  Selected {self.alpha_rate}% of Mutated Population Chromosomes --- {list(self.population_after_mutation[number_of_random_indices])}")
 			print(f"\t\t▶  Selected {self.alpha_rate}% of Old Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}")
 			self.genes_population_after_fitness[number_of_random_indices] = self.population_after_mutation[number_of_random_indices]
-			print(f"\t\t▶  Replced {self.alpha_rate}% of Old Population Chromosomes with {self.alpha_rate}% of Mutated Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}")
+			print(f"\t\t▶  Replced {self.alpha_rate}% of Old Population Chromosomes with {self.alpha_rate}% of Mutated Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}\n")
 			np.random.shuffle(self.genes_population_after_fitness)
 			self.population = population(colors=self.colors, adj_mat=self.adj_mat, chromosomes=self.genes_population_after_fitness)
 		# ==========================================================================
-		print("\t▶  Population Shape After Replacement --- ({}, {})\n".format(len(self.population.pop), len(self.population.pop[0])))
+		print("\t▶  Population Shape After Replacement --- ({}, {})\n".format(len(self.population()), len(self.population()[0]) ))
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 	
@@ -378,17 +398,42 @@ class genetic_process():
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 	def draw(self):
-		# https://plotly.com/python/v3/3d-network-graph/
-		# https://plotly.com/python/network-graphs/
-		# print(self.valid_chromosomes[0]) # the first one is the best one because its sorted in ascending order and is minimum
-		pass
+		if self.total_generations_valid_chromosomes.size == 0: # we can't color the graph cause there exist invalid chromosomes
+			print(f"\t\t❌  It's not Possible to Color the graph with the Given Number of Colors. Detected Invalid Chromosomes\n")
+		if self.total_generations_minimum_colors_valid_chromosomes.size == 0 and self.total_generations_valid_chromosomes.size != 0: # we have to plot only if, first all chromosomes are valid and second there are minimum colors inside their genes
+			print(f"\t\t❌  It's not Possible to Color the Graph with Less than {self.colors.shape[0]} Colors")
+			print(f"\t\t✅  It's Possible to Color the Graph with {self.colors.shape[0]} Colors using Random Selected Valid Chromosome")
+			generation_index                     = random.sample(range(self.total_generations_valid_chromosomes.shape[0]), 1)[0]
+			selected_generation_chromosome_index = random.sample(range(self.total_generations_valid_chromosomes[generation_index].shape[0]), 1)[0]
+			selected_valid_chromosome            = self.total_generations_valid_chromosomes[generation_index][selected_generation_chromosome_index]
+			print(f"\t\t▶  Random Selected Valid Chromosome --- {selected_valid_chromosome}\n")
+			
+			# plot 3D graph
+			# ...
+		
+		if self.total_generations_minimum_colors_valid_chromosomes.size != 0: # we can color the graph with minimum colors cause there are some valid chromosomes
+			print(f"\t\t✅  It's Possible to Color the Graph with Less than {self.colors.shape[0]} Colors using Random Selected Valid Chromosome with Minimum Colors")
+			generation_index    = random.sample(range(self.total_generations_minimum_colors_valid_chromosomes.shape[0]), 1)[0]
+			selected_generation = self.total_generations_minimum_colors_valid_chromosomes[generation_index]
+			selected_generation_nb_colors_for_each_chromosome = np.array([c[np.unique(c, return_index=True)[1]].shape[0] for c in selected_generation])
+			minimum_nb_colors   = np.min(selected_generation_nb_colors_for_each_chromosome)
+			nb_color_index      = random.sample(range(selected_generation_nb_colors_for_each_chromosome.shape[0]), 1)
+			selected_nb_color   = selected_generation_nb_colors_for_each_chromosome[nb_color_index]
+			while selected_nb_color != minimum_nb_colors:
+				nb_color_index    = random.sample(range(selected_generation_nb_colors_for_each_chromosome.shape[0]), 1)
+				selected_nb_color = selected_generation_nb_colors_for_each_chromosome[nb_color_index]
+			selected_minimum_colors_valid_chromosome = selected_generation[nb_color_index][0]
+			print(f"\t\t▶  Random Selected Valid Chromosome with Minimum Colors --- {selected_minimum_colors_valid_chromosome}\n")
+			
+			# plot 3D graph
+			# ...
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 	
 	def save(self):
 		print("\n≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣\n")
 		print(f"⏳ Saving Valid Chromosomes, Chromosomes with Minimum Colors and Best Fitness Scores")
-		np.save(f"utils/valid_chromo_in_{self.generations}_generations.npy", self.valid_chromosomes)
-		np.save(f"utils/minimum_colors_valid_chromo_in_{self.generations}_generations.npy", self.minimum_colors_valid_chromosomes)
-		np.save(f"utils/best_fitness_scores_in_{self.generations}_generations.npy", self.best_fitness_scores)
+		np.save(f"utils/results/latest-test-case/valid_chromosomes_in_{self.generations}_generations.npy", self.total_generations_valid_chromosomes)
+		np.save(f"utils/results/latest-test-case/minimum_colors_valid_chromosomes_in_{self.generations}_generations.npy", self.total_generations_minimum_colors_valid_chromosomes)
+		np.save(f"utils/results/latest-test-case/best_fitness_scores_in_{self.generations}_generations.npy", self.best_fitness_scores)
 		print()
