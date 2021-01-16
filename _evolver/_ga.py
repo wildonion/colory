@@ -1,3 +1,6 @@
+
+
+import matplotlib.pyplot as plt
 import networkx as nx
 import plotly.graph_objects as go
 import numpy as np
@@ -340,11 +343,11 @@ class genetic_process():
 	# 									REPLACEMENT OPERATORS
 
 	def __replacement(self):
-		print(f"\t▶  Replcaing with {self.alpha_rate} ratio\n")
+		print(f"\t▶  Replcaing with {self.alpha_rate*100} ratio\n")
 		# ==========================================================================
 		#								   STEADY STATE
 		
-		if self.alpha_rate == 1.:
+		if self.alpha_rate == 0.01:
 			print(f"\t▶  Steady State Method is Selected")
 			index                             = random.sample(range(self.population_after_mutation.shape[0]), 1)[0]
 			print(f"\t\t▶  Random Selected Index --- {index}")
@@ -356,7 +359,7 @@ class genetic_process():
 			print(f"\t\t▶  Worst Chromosome Fitness --- {worst_chromosome_fitness}")
 			random_mutated_chromosome_fitness = chromosome(random_mutated_chromosome).fitness(self.adj_mat, self.colors)
 			print(f"\t\t▶  Random Selected Chromosome Fitness --- {random_mutated_chromosome_fitness}")
-			if random_mutated_chromosome_fitness >= worst_chromosome_fitness:
+			if random_mutated_chromosome_fitness <= worst_chromosome_fitness:
 				self.genes_population_after_fitness[-1] = random_mutated_chromosome
 				print(f"\t\t▶  Replced Worst Chromosome with Random Selected Chromosome --- {self.genes_population_after_fitness[-1]}\n")
 			else:
@@ -366,7 +369,7 @@ class genetic_process():
 		# ==========================================================================
 		#									GENERATIONAL
 		
-		elif self.alpha_rate == 100.:
+		elif self.alpha_rate == 1:
 			print(f"\t▶  Generational+Elitism Method is Selected\n")
 			old_population_best_chromosome = self.genes_population_after_fitness[0]
 			population_next_generation = np.vstack((self.population_after_mutation, old_population_best_chromosome))
@@ -376,18 +379,19 @@ class genetic_process():
 		
 		else:
 			print(f"\t▶  Generational Gap Method is Selected")
-			number_of_random_indices = random.sample(range(self.population_after_mutation.shape[0]), int(self.alpha_rate/100 * self.population_after_mutation.shape[0]))
-			print(f"\t\t▶  Selected {self.alpha_rate}% of Mutated Population Chromosomes --- {list(self.population_after_mutation[number_of_random_indices])}")
-			print(f"\t\t▶  Selected {self.alpha_rate}% of Old Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}")
+			number_of_random_indices = random.sample(range(self.population_after_mutation.shape[0]), int(self.alpha_rate * self.population_after_mutation.shape[0]))
+			print(f"\t\t▶  Selected {self.alpha_rate*100}% of Mutated Population Chromosomes --- {list(self.population_after_mutation[number_of_random_indices])}")
+			print(f"\t\t▶  Selected {self.alpha_rate*100}% of Old Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}")
 			self.genes_population_after_fitness[number_of_random_indices] = self.population_after_mutation[number_of_random_indices]
-			print(f"\t\t▶  Replced {self.alpha_rate}% of Old Population Chromosomes with {self.alpha_rate}% of Mutated Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}\n")
+			print(f"\t\t▶  Replced {self.alpha_rate*100}% of Old Population Chromosomes with {self.alpha_rate*100}% of Mutated Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}\n")
 			np.random.shuffle(self.genes_population_after_fitness)
 			self.population = population(colors=self.colors, adj_mat=self.adj_mat, chromosomes=self.genes_population_after_fitness)
 		# ==========================================================================
 		print("\t▶  Population Shape After Replacement --- ({}, {})\n".format(len(self.population()), len(self.population()[0]) ))
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
-	
+	# 										  PLOT FITNESS GENERATIONS
+
 	def plot(self):
 		fig = go.Figure()
 		fig.add_trace(go.Scatter(x=np.arange(1, self.generations+1), y=self.best_fitness_scores, mode='lines', name='Fitness Generation'))
@@ -396,6 +400,7 @@ class genetic_process():
 		fig.show()
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
+	# 		COLOR THE GRAPH USING VALID CHROMOSOMES OR CHROMOSOMES WITH MINIMUM NUMBER OF COLORS 
 
 	def draw(self):
 		if self.total_generations_valid_chromosomes.size == 0: # we can't color the graph cause there exist invalid chromosomes
@@ -407,9 +412,9 @@ class genetic_process():
 			selected_generation_chromosome_index = random.sample(range(self.total_generations_valid_chromosomes[generation_index].shape[0]), 1)[0]
 			selected_valid_chromosome            = self.total_generations_valid_chromosomes[generation_index][selected_generation_chromosome_index]
 			print(f"\t\t▶  Random Selected Valid Chromosome --- {selected_valid_chromosome}\n")
-			
-			# plot 3D graph
-			# ...
+			colors = self.colors[selected_valid_chromosome]
+			nx.draw(self.graph, with_labels=True, node_color=colors, node_size=700, alpha=0.9)
+			plt.savefig(f"utils/results/latest-test-case/colored_graph_using_valid_chromosomes_after_{self.generations}_generations.png")
 		
 		if self.total_generations_minimum_colors_valid_chromosomes.size != 0: # we can color the graph with minimum colors cause there are some valid chromosomes
 			print(f"\t\t✅  It's Possible to Color the Graph with Less than {self.colors.shape[0]} Colors using Random Selected Valid Chromosome with Minimum Colors")
@@ -424,9 +429,10 @@ class genetic_process():
 				selected_nb_color = selected_generation_nb_colors_for_each_chromosome[nb_color_index]
 			selected_minimum_colors_valid_chromosome = selected_generation[nb_color_index][0]
 			print(f"\t\t▶  Random Selected Valid Chromosome with Minimum Colors --- {selected_minimum_colors_valid_chromosome}\n")
+			minimum_colors = self.colors[selected_minimum_colors_valid_chromosome]
+			nx.draw(self.graph, with_labels=True, node_color=minimum_colors, node_size=700, alpha=0.9)
+			plt.savefig(f"utils/results/latest-test-case/colored_graph_using_minimum_colors_after_{self.generations}_generations.png")
 			
-			# plot 3D graph
-			# ...
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 	
