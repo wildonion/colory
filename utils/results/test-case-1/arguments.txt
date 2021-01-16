@@ -1,0 +1,1 @@
+python3 colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors orange red --chromosomes 50 --generations 60 --parents 35 --selection-method tournament --crossover-method 3-point --mutation-method creep --alpha-rate 0.01 --mutation-rate 0.20 --crossover-rate 0.80
