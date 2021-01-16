@@ -42,7 +42,7 @@ python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors orange red b
 
 ## 📊 Results
 
-We ran the GA for different [test-cases](https://github.com/wildonion/colory/blob/main/utils/results/) and store their results inside `utils/results` folder. Below are two of the test-cases that our algorithm reached state-of-the-art of solving coloring problem. 🙂
+We ran the GA for different test-cases and store their results inside [`utils/results`](https://github.com/wildonion/colory/blob/main/utils/results/) folder. Below are two of the test-cases that our algorithm reached state-of-the-art of solving coloring problem. 🙂
 
 ### Test-case-1
 
