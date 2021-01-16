@@ -37,17 +37,17 @@ python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors orange red b
 
 ## 📊 Results
 
-We ran the GA for different test-cases and store their results inside `results` folder. Below are two of the test-cases that our algorithm reached state-of-the-art of solving coloring problem.
+We ran the GA for different test-cases and store their results inside `results` folder. Below are two of the test-cases that our algorithm reached state-of-the-art of solving coloring problem. 🙂
 
 ### Test-case-1
 
-> [Argument Options](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/arguments.txt)
+[Argument Options](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/arguments.txt)
 
-> [Best Fitness Scores in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/best_fitness_scores_in_60_generations.npy)
+[Best Fitness Scores in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/best_fitness_scores_in_60_generations.npy)
 
-> [Valid Chromosomes with Minimum Colors in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/minimum_colors_valid_chromosomes_in_60_generations.npy)
+[Valid Chromosomes with Minimum Colors in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/minimum_colors_valid_chromosomes_in_60_generations.npy)
 
-> [Valid Chromosomes in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/valid_chromosomes_in_60_generations.npy)
+[Valid Chromosomes in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/valid_chromosomes_in_60_generations.npy)
 
 > Statistical Logs
 <p align="center">
@@ -66,13 +66,13 @@ We ran the GA for different test-cases and store their results inside `results` 
 
 ### Test-case-2
 
-> [Argument Options](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/arguments.txt)
+[Argument Options](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/arguments.txt)
 
-> [Best Fitness Scores in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/best_fitness_scores_in_60_generations.npy)
+[Best Fitness Scores in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/best_fitness_scores_in_60_generations.npy)
 
-> [Valid Chromosomes with Minimum Colors in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/minimum_colors_valid_chromosomes_in_60_generations.npy)
+[Valid Chromosomes with Minimum Colors in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/minimum_colors_valid_chromosomes_in_60_generations.npy)
 
-> [Valid Chromosomes in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/valid_chromosomes_in_60_generations.npy)
+[Valid Chromosomes in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/valid_chromosomes_in_60_generations.npy)
 
 > Statistical Logs
 <p align="center">
