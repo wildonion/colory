@@ -28,7 +28,7 @@ python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors orange red b
 
 > Chromosome Representation of a Colored Graph
 <p align="center">
-    <img src="https://github.com/wildonion/colory/blob/main/utils/colory_chromo.png">
+    <img src="https://github.com/wildonion/colory/blob/main/utils/coloring_chromo.png">
 </p>
 
 #### 📌 Objective Functions
