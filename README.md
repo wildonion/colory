@@ -16,7 +16,7 @@ pip install -r requirements.txt
 ## 💻 Usage Example
 
 ```console
-python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors o r b g --chromosomes 50 --generations 20 --parents 30 --selection-method tournament --crossover-method 3-point --mutation-method creep --alpha-rate 20 --mutation-rate 0.20 --crossover-rate 0.80
+python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors orange red blue green --chromosomes 50 --generations 20 --parents 30 --selection-method tournament --crossover-method 3-point --mutation-method creep --alpha-rate 0.30 --mutation-rate 0.20 --crossover-rate 0.80
 
 ```
 
@@ -36,3 +36,55 @@ python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors o r b g --ch
 
 
 ## 📊 Results
+
+We ran the GA for different test-cases and store their results inside `results` folder. Below are two of the test-cases that our algorithm reached state-of-the-art of solving coloring problem.
+
+### Test-case-1
+
+> [Argument Options](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/arguments.txt)
+
+> [Best Fitness Scores in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/best_fitness_scores_in_60_generations.npy)
+
+> [Valid Chromosomes with Minimum Colors in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/minimum_colors_valid_chromosomes_in_60_generations.npy)
+
+> [Valid Chromosomes in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/valid_chromosomes_in_60_generations.npy)
+
+> Statistical Logs
+<p align="center">
+    <img src="https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/stat_log.png">
+</p>
+
+> Fitness Generations
+<p align="center">
+    <img src="https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/fitness_generations.png">
+</p>
+
+> Colored Graph using Valid Chromosomes
+<p align="center">
+    <img src="https://github.com/wildonion/colory/blob/main/utils/results/test-case-1/colored_graph_using_valid_chromosomes_after_60_generations.png">
+</p>
+
+### Test-case-2
+
+> [Argument Options](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/arguments.txt)
+
+> [Best Fitness Scores in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/best_fitness_scores_in_60_generations.npy)
+
+> [Valid Chromosomes with Minimum Colors in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/minimum_colors_valid_chromosomes_in_60_generations.npy)
+
+> [Valid Chromosomes in 60 Generations](https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/valid_chromosomes_in_60_generations.npy)
+
+> Statistical Logs
+<p align="center">
+    <img src="https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/stat_log.png">
+</p>
+
+> Fitness Generations
+<p align="center">
+    <img src="https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/fitness_generations.png">
+</p>
+
+> Colored Graph using Valid Chromosomes with Minimum Colors
+<p align="center">
+    <img src="https://github.com/wildonion/colory/blob/main/utils/results/test-case-2/colored_graph_using_minimum_colors_after_60_generations.png">
+</p>
