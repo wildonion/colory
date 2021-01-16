@@ -17,10 +17,10 @@
 |-------------------------------------------------------------------------------------------------
 |
 | USAGE EXAMPLE : 
-|			python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors o r b g \
+|			python colory.py --adj-mat utils/matrices/tree/adj_mat.txt --colors orange red blue green \
 |							 --chromosomes 50 --generations 60 --parents 35 \
 |							 --selection-method tournament --crossover-method 3-point \
-|							 --mutation-method creep --alpha-rate 20 \
+|							 --mutation-method creep --alpha-rate 0.30 \
 |							 --mutation-rate 0.20 --crossover-rate 0.80
 |			
 |
@@ -115,7 +115,7 @@ elif COLORS.shape[0] < len(ADJ_MAT):
 						  mutation_rate=args.mutation_rate, crossover_rate=args.crossover_rate)
 	app.run() # run the process
 	app.save() # save valid chromosomes, minimum valid chromosomes and best fitness scores
-	# app.plot() # plot fitness score in each generation after finishing the process 
+	app.plot() # plot fitness score in each generation after finishing the process 
 	app.draw() # draw the colored graph with best chromosome
 	best_fitness_scores 			 				   = app.best_fitness_scores # all best fitness scores collected from every generation
 	total_generations_valid_chromosomes 			   = app.total_generations_valid_chromosomes # all valid chromosomes collected from every generation
