@@ -49,7 +49,7 @@ parser.add_argument('--colors', action='store', nargs="+", help='Name of colors 
 parser.add_argument('--chromosomes', action='store', type=int, help='The number of total chromosomes in a population.', required=True)
 parser.add_argument('--generations', action='store', type=int, help='The number of generations.', required=True)
 parser.add_argument('--parents', action='store', type=int, help='The number of parents to mate for breeding offspring.', required=True)
-parser.add_argument('--selection-method', action='store', type=str, help='Selection method for crossover operation (roulette_wheel, tournament or rank).', required=True)
+parser.add_argument('--selection-method', action='store', type=str, help='Selection method for crossover operation (roulette_wheel or FPS, tournament or rank).', required=True)
 parser.add_argument('--crossover-method', action='store', type=str, help='Crossover method to generate offspring (n_point[where n is an integer] or uniform).', required=True)
 parser.add_argument('--mutation-method', action='store', type=str, help='Mutation method to mutate offspring (swap, creep or inversion).', required=True)
 parser.add_argument('--alpha-rate', action='store', type=float, help='Alpha rate for replacing the old population.', required=True)

@@ -12,18 +12,111 @@ __all__ = ['genetic_process', 'population'] # export only these classes
 
 
 class gene:
+	"""
+		🔴 This is the gene class, an allele of a gene.
+
+
+			 💡 Attributes:
+					allele:
+						type:
+							public 
+						value:
+							- value of a gene
+	"""
 	def __init__(self, allele):
-		self.allele = allele # value of gene
+		self.allele = allele
 
 
 # ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 class chromosome:
+	"""
+		🔴 This is the chromosome class, the heart of the genetic algorithm.
+		⚠️ A valid chromosome (graph) is a chromosome that none of its two neighboring genes (nodes) have same colors.
+		⚠️ A minimum valid chromosome (graph) is chromosome that is valid and its genes (nodes) colored with minimum number of colors. 
+
+
+			 💡 Methods:
+					fitness:
+						type: 
+							public
+						params:
+							- numpy array of adjacency matrix
+							- numpy array of colors
+						return: 
+							- total fitness of the chromosome
+						jobs:
+							- calculate the total fitness of the chromosome 
+					-------------------------------------------------------
+					__invalid_genes_objective:
+						type: 
+							private
+						params: 
+							- numpy array of adjacency matrix
+						return:
+							- number of invalid genes inside the chromosome
+						jobs:
+							- calculate the number of invalid genes
+					-------------------------------------------------------
+					__minimum_genes_objective:
+						type: 
+							private 
+						params:
+							- numpy array of colors
+						return:
+							- minimum number of colors inside the chromosome
+						jobs:
+							- calculate the minimum number of colors
+					-------------------------------------------------------
+					__getitem__:
+						type:
+							magic
+						params:
+							- locus
+						return:
+							- a gene value by its locus
+						jobs:
+							- return a gene value by its locus 
+					-------------------------------------------------------
+					__len__:
+						type:
+							magic
+						return:
+							- length of the chromosome
+						jobs:
+							- return the length of the chromosome 
+
+			 💡 Attributes:
+					genes:
+						type:
+							public
+						value:
+							- numpy array of all gene values
+					-------------------------------------------------------
+					gene_objects:
+						type:
+							public
+						value:
+							- numpy array of all gene objects
+					-------------------------------------------------------
+					is_valid:
+						type:
+							public
+						value:
+							- is this a valid chromosome
+					-------------------------------------------------------
+					has_min_colors:
+						type:
+							public
+						value:
+							- does this chromosome have minimum number of colors
+
+	"""
 	def __init__(self, genes):
-		self.genes = np.array(genes) # list of all gene values
-		self.gene_objects = np.array([gene(g) for g in self.genes]) # list of all gene objects
-		self.is_valid = False # valid chromosome
-		self.has_min_colors = False # chromosome with minimum colors
+		self.genes = np.array(genes)
+		self.gene_objects = np.array([gene(g) for g in self.genes])
+		self.is_valid = False
+		self.has_min_colors = False
 
 	def fitness(self, adj_mat, colors):
 		alpha, beta              = 0.8, 0.2
@@ -67,6 +160,97 @@ class chromosome:
 # ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 class population:
+	"""
+		🔴 This is the population class, a population of chromosomes.
+		⚠️ We built our chromosomes as a list of random values in range 0 to the number of colors - 1.
+		⚠️ If the chromosomes attribute is empty means that we are in first generation.
+		⚠️ The first fitness scores in ascending_fitness_scores is the best chromosome.
+
+
+			 💡 Methods:
+					__init_pop:
+						type: 
+							private
+						jobs:
+							- generate chromosomes population
+					-------------------------------------------------------
+					fitness_scores:
+						type:
+							public
+						return:
+							- all chromosomes fitness scores in ascending order
+							- the population of all chromosomes in ascending order
+						jobs:
+							- calculate each fitness score of all chromosomes
+					-------------------------------------------------------
+					get_adj_mat:
+						type: 
+							public
+						return:
+							- numpy array of adjacency matrix
+						jobs:
+							- return the numpy array of adjacency matrix
+					-------------------------------------------------------
+					get_colors:
+						type: 
+							public
+						return:
+							- numpy array of colors
+						jobs:
+							- return the numpy array of colors
+					-------------------------------------------------------
+					__call__:
+						type: 
+							magic
+						return:
+							- the population of all chromosomes
+						jobs:
+							- return the population of all chromosomes 
+					-------------------------------------------------------
+					__getitem__:
+						type:
+							magic
+						params:
+							- locus
+						return:
+							- a gene value by its locus
+						jobs:
+							- get the idx-th chromosome of the population 
+					-------------------------------------------------------
+					__len__:
+						type:
+							magic
+						return:
+							- length of the population
+						jobs:
+							- return the length of the population 
+
+			 💡 Attributes:
+					amount:
+						type:
+							public
+						value:
+							- number of chromosomes inside the population
+					-------------------------------------------------------
+					colors:
+						type:
+							public
+						value:
+							- numpy array of colors
+					-------------------------------------------------------
+					adj_mat:
+						type:
+							public
+						value:
+							- numpy array of adjacency matrix
+					-------------------------------------------------------
+					pop:
+						type:
+							public
+						value:
+							- numpy array of population of all chromosomes
+
+	"""
 	def __init__(self, amount=None, colors=None, adj_mat=None, chromosomes=[]):
 		self.amount  = amount
 		self.colors  = colors
@@ -74,7 +258,7 @@ class population:
 		if chromosomes == []: self.__init_pop()
 		else: self.pop = [chromosome(c) for c in chromosomes]
 	
-	def __init_pop(self): # permutation encoding
+	def __init_pop(self):
 		self.pop = [chromosome([np.where(self.colors == np.random.choice(self.colors, 1))[0][0] for _ in range(self.adj_mat.shape[0])]) for _ in range(self.amount)] # build each chromosome genes with a random index of colors list
 
 	def fitness_scores(self):
@@ -104,6 +288,190 @@ class population:
 # ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 
 class genetic_process():
+	"""
+		🔴 This is the genetic_process class, it controls the process of our genetic algorithm.
+		⚠️ We built a numpy array called total_generations_valid_chromosomes of all generations that contains valid chromosomes.
+		⚠️ We built a numpy array called total_generations_minimum_colors_valid_chromosomes of all generations that contains valid chromosomes with minimum number of colors.
+		⚠️ We can't color the graph at all if there exist invalid chromosomes, means total_generations_valid_chromosomes.size == 0. 
+		⚠️ We have to color the graph only using valid chromosomes if total_generations_minimum_colors_valid_chromosomes.size == 0.
+		⚠️ We can color the graph using valid chromosomes with minimum number of colors if we have valid chromosomes or total_generations_valid_chromosomes.size != 0.
+
+
+			 💡 Methods:
+					run:
+						type: 
+							public
+						jobs:
+							- run our GA operators in every generation
+							- build a numpy array of all generations that contains valid chromosomes
+							- build a numpy array of all generations that contains valid chromosomes with minimum number of colors
+					-------------------------------------------------------
+					__selection:
+						type:
+							private
+						jobs:
+							- select best chromosomes based on defined method and the number of parents
+					-------------------------------------------------------
+					__single_point_crossover:
+						type: 
+							private
+						params:
+							- first parent
+							- second parent
+							- point to cross
+						return:
+							- two generated offspring 
+						jobs:
+							- do a single point crossover on selected parents
+					-------------------------------------------------------
+					__multi_point_crossover:
+						type: 
+							private
+						params:
+							- first parent
+							- second parent
+							- points to cross
+						return:
+							- two generated offspring 
+						jobs:
+							- do a recursive multi point crossover on selected parents using __single_point_crossover method
+					-------------------------------------------------------
+					__crossover:
+						type:
+							private
+						jobs:
+							- generate offsprings based on defined method
+					-------------------------------------------------------
+					__mutation:
+						type:
+							private
+						jobs:
+							- mutate offsprings based on defined method
+					-------------------------------------------------------
+					__replacement:
+						type:
+							private
+						jobs:
+							- replace the old population with new population based on defined method
+					-------------------------------------------------------
+					plot:
+						type:
+							public
+						jobs:
+							- plot the numpy array of best fitnesse scores collected in every generation using plotly
+					-------------------------------------------------------
+					draw:
+						type:
+							public
+						jobs:
+							- select a random chromosome either from valid chromosomes or valid chromosomes with minimum number of colors
+							- color the graph using selected random chromosome and networkx
+					-------------------------------------------------------
+					save:
+						type:
+							public
+						jobs:
+							- save the numpy arrays of best fitnesse scores, valid chromosomes and valid chromosomes with minimum number of colors collected from every generation
+
+			 💡 Attributes:
+					colors:
+						type:
+							public
+						value:
+							- numpy array of colors
+					-------------------------------------------------------
+					adj_mat:
+						type:
+							public
+						value:
+							- numpy array of adjacency matrix
+					-------------------------------------------------------
+					graph:
+						type:
+							public
+						value:
+							- networkx graph from adjacency matrix
+					-------------------------------------------------------
+					generations:
+						type:
+							public
+						value:
+							- number of generations
+					-------------------------------------------------------
+					population:
+						type:
+							public
+						value:
+							- numpy array of population of all chromosomes
+					-------------------------------------------------------
+					parents:
+						type:
+							public
+						value:
+							- number of parents to mate for breeding offspring
+					-------------------------------------------------------
+					mutation_rate:
+						type:
+							public
+						value:
+							- mutation ratio
+					-------------------------------------------------------
+					crossover_rate:
+						type:
+							public
+						value:
+							- crossover ratio
+					-------------------------------------------------------
+					alpha_rate:
+						type:
+							public
+						value:
+							- alpha ratio for replacement method
+					-------------------------------------------------------
+					genes_population_after_fitness:
+						type:
+							public
+						value:
+							- sorted chromosomes population with theit gene values
+					-------------------------------------------------------
+					population_after_selection:
+						type:
+							public
+						value:
+							- chromosomes population after selection process
+					-------------------------------------------------------
+					population_after_crossover:
+						type:
+							public
+						value:
+							- chromosomes population after crossover process
+					-------------------------------------------------------
+					population_after_mutation:
+						type:
+							public
+						value:
+							- chromosomes population after mutation process
+					-------------------------------------------------------
+					total_generations_valid_chromosomes:
+						type:
+							public
+						value:
+							- all none empty valid chromosomes collected from every generation
+					-------------------------------------------------------
+					total_generations_minimum_colors_valid_chromosomes:
+						type:
+							public
+						value:
+							- all none empty valid chromosomes with minimum number of colors collected from every generation
+					-------------------------------------------------------
+					best_fitness_scores:
+						type:
+							public
+						value:
+							- all best fitness scores collected from every generation
+
+
+	"""
 	def __init__(self, generations, population, parents, selection_method, crossover_method, mutation_method, alpha_rate, mutation_rate, crossover_rate):
 		self.adj_mat 						  					= population.get_adj_mat()
 		self.colors 						  					= population.get_colors()
@@ -121,8 +489,8 @@ class genetic_process():
 		self.population_after_selection       					= None
 		self.population_after_crossover       					= None
 		self.population_after_mutation        					= None
-		self.total_generations_valid_chromosomes                = [] # all none empty valid chromosomes collected from every generation
-		self.total_generations_minimum_colors_valid_chromosomes = [] # all none empty valid chromosomes with minimum colors collected from every generation
+		self.total_generations_valid_chromosomes                = []
+		self.total_generations_minimum_colors_valid_chromosomes = []
 		self.best_fitness_scores                                = []
 
 
@@ -163,7 +531,7 @@ class genetic_process():
 		#								ROULETTE WHEEL
 		
 		if self.parents <= self.genes_population_after_fitness.shape[0]: # check that the number of parents is smaller than the total population
-			if self.selection_method == "roulette_wheel":
+			if self.selection_method == "roulette_wheel" or self.selection_method == "FPS":
 				fitness_population = sum([c.fitness(self.adj_mat, self.colors) for c in self.population]) # sum of all scores (fitnesses)
 				individual_expected_values = [(1/c.fitness(self.adj_mat, self.colors))/fitness_population for c in self.population] # all chromosomes prob (exprected values) - we scaled up every chromosome fitness cause big roulette of the wheel belongs to minimum fitnesses 
 				cum_prob = [sum(individual_expected_values[:i+1]) for i in range(len(individual_expected_values))] # cumulative sum of chromosomes exprected values (prob)
@@ -343,7 +711,7 @@ class genetic_process():
 	# 									REPLACEMENT OPERATORS
 
 	def __replacement(self):
-		print(f"\t▶  Replcaing with {self.alpha_rate*100} ratio\n")
+		print(f"\t▶  Replacing with {self.alpha_rate*100} ratio\n")
 		# ==========================================================================
 		#								   STEADY STATE
 		
@@ -361,7 +729,7 @@ class genetic_process():
 			print(f"\t\t▶  Random Selected Chromosome Fitness --- {random_mutated_chromosome_fitness}")
 			if random_mutated_chromosome_fitness <= worst_chromosome_fitness:
 				self.genes_population_after_fitness[-1] = random_mutated_chromosome
-				print(f"\t\t▶  Replced Worst Chromosome with Random Selected Chromosome --- {self.genes_population_after_fitness[-1]}\n")
+				print(f"\t\t▶  Replaced Worst Chromosome with Random Selected Chromosome --- {self.genes_population_after_fitness[-1]}\n")
 			else:
 				print(f"\t\t▶  No Need to Use Steady State Replacement Method\n")
 			np.random.shuffle(self.genes_population_after_fitness)
@@ -383,7 +751,7 @@ class genetic_process():
 			print(f"\t\t▶  Selected {self.alpha_rate*100}% of Mutated Population Chromosomes --- {list(self.population_after_mutation[number_of_random_indices])}")
 			print(f"\t\t▶  Selected {self.alpha_rate*100}% of Old Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}")
 			self.genes_population_after_fitness[number_of_random_indices] = self.population_after_mutation[number_of_random_indices]
-			print(f"\t\t▶  Replced {self.alpha_rate*100}% of Old Population Chromosomes with {self.alpha_rate*100}% of Mutated Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}\n")
+			print(f"\t\t▶  Replaced {self.alpha_rate*100}% of Old Population Chromosomes with {self.alpha_rate*100}% of Mutated Population Chromosomes --- {list(self.genes_population_after_fitness[number_of_random_indices])}\n")
 			np.random.shuffle(self.genes_population_after_fitness)
 			self.population = population(colors=self.colors, adj_mat=self.adj_mat, chromosomes=self.genes_population_after_fitness)
 		# ==========================================================================
