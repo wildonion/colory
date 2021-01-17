@@ -1,10 +1,5 @@
 
 
-
-#### 【Graph Coloring With Minimum Number of Colors Using Genetic Algorithm】
-
----
-
 ## 🔧 Setup
 
 ```console
