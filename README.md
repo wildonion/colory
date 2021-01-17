@@ -48,11 +48,11 @@ The obtained fitness function consists of two parts: The first part detects the 
 `total_fitness = (alpha*invalid_normalized) + (beta*m_prime_normalized)`
 
 
-[Fitness Function](https://github.com/wildonion/colory/blob/8615f41f84685e0cba8ae27fff8f20cc1fddf37a/_evolver/_ga.py#L121)
+[Fitness Function](https://github.com/wildonion/colory/blob/e6e94342b2c72e49019bbc9ff3f7a22580e6eea4/_evolver/_ga.py#L121)
 
-[Objective Function part 1](https://github.com/wildonion/colory/blob/8615f41f84685e0cba8ae27fff8f20cc1fddf37a/_evolver/_ga.py#L132)
+[Objective Function part 1](https://github.com/wildonion/colory/blob/e6e94342b2c72e49019bbc9ff3f7a22580e6eea4/_evolver/_ga.py#L132)
 
-[Objective Function part 2](https://github.com/wildonion/colory/blob/8615f41f84685e0cba8ae27fff8f20cc1fddf37a/_evolver/_ga.py#L143)
+[Objective Function part 2](https://github.com/wildonion/colory/blob/e6e94342b2c72e49019bbc9ff3f7a22580e6eea4/_evolver/_ga.py#L143)
 
 ⚠️ Depending on the method that we have used during the process, the fitness function could be equal to the objective function or inverted.
 
@@ -95,7 +95,7 @@ Since the total fitness function never equals zero (The minimum number of colors
 
 To color the graph, we have defined two **NumPy** arrays and have stored the valid chromosomes and the valid chromosomes with the minimum number of colors in each generation called `total_generations_valid_chromosomes` and `total_generations_minimum_colors_valid_chromosomes`, respectively.  Using these two arrays, we plot the colored graph based on the our coloring problem inputs' size.
 
-[Draw Function](https://github.com/wildonion/colory/blob/8615f41f84685e0cba8ae27fff8f20cc1fddf37a/_evolver/_ga.py#L774)
+[Draw Function](https://github.com/wildonion/colory/blob/e6e94342b2c72e49019bbc9ff3f7a22580e6eea4/_evolver/_ga.py#L774)
 
 ## 📊 Results
 
