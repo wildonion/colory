@@ -62,12 +62,16 @@ args = parser.parse_args()
 
 
 
-# ------------ building adjacency matrix
-# -----------------------------------------------
+# ------------ building adjacency matrix, colors and checking ratios
+# -------------------------------------------------------------------------
 ADJ_MAT                               = np.array([list(map(lambda x : int(x), list(filter(lambda x: x != '', \
 													[x for x in row.replace('\n', '').split(" ")])))) for row in args.adj_mat.readlines()])
 COLORS                                = np.array(args.colors)
 
+if args.alpha_rate == 0 or args.alpha_rate > 1 or args.crossover_rate < 0 or \
+   args.crossover_rate > 1 or args.mutation_rate < 0 or args.mutation_rate > 1:
+	print("\t❌ ratio must be between 0 and 1\n")
+	sys.exit(1)
 
 
 
