@@ -1,0 +1,3 @@
+python colory.py --adj-mat utils/matrices/graph/simple/adj_mat.txt --colors teal navy  --chromosomes 50 -
+-generations 60 --parents 35 --selection-method tournament --crossover-method uniform --mutation-method creep --alpha-rate 0.01 --mutatio
+n-rate 0.20 --crossover-rate 0.80
