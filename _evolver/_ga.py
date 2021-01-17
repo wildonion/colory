@@ -295,6 +295,7 @@ class genetic_process():
 		⚠️ We can't color the graph at all if there exist invalid chromosomes, means total_generations_valid_chromosomes.size == 0. 
 		⚠️ We have to color the graph only using valid chromosomes if total_generations_minimum_colors_valid_chromosomes.size == 0.
 		⚠️ We can color the graph using valid chromosomes with minimum number of colors if we have valid chromosomes or total_generations_valid_chromosomes.size != 0.
+		⚠️ We Selected k chromosomes with uniform probability in our tournament method.
 
 
 			 💡 Methods:
@@ -402,7 +403,7 @@ class genetic_process():
 						type:
 							public
 						value:
-							- numpy array of population of all chromosomes
+							- numpy array of population of all chromosome objects
 					-------------------------------------------------------
 					parents:
 						type:
