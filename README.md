@@ -84,7 +84,7 @@ Replacement
 
 * As replacement methods, we have used steady-state, generational gap, and generational method using elitism depending on the proportion of the replaced population defined by the alpha rate, which should be initialized by the user.
 
-The user should initialize crossover and mutation rates. As we have used the **GA**, the crossover rate should be much higher than the mutation rate.
+⚠️ The user should initialize crossover and mutation rates. As we have used the **GA**, the crossover rate should be much higher than the mutation rate.
 
 
 #### 📌 Stopping Criterion
