@@ -62,27 +62,27 @@ We have a two-part goal for this problem. The first and the essential part is to
 
 #### 📌 Genetic Operators
 
-Order of operations are as follows, respectively:
+Order of operations are as follows:
 
 Selection
 
-* As selection methods, we have used the roulette wheel (**FPS**), rank, and tournament.
+> As selection methods, we have used the roulette wheel (**FPS**), rank, and tournament.
 
- * In the roulette wheel (**FPS**), the fitness function is equal to the inversed objective function.
- * In tournament and ranked based selection, the fitness function is equal to the objective function.
- * In the tournament method, we used equal probability distribution for each gene in the selected chromosome.
+* In the roulette wheel (**FPS**), the fitness function is equal to the inversed objective function.
+* In tournament and ranked based selection, the fitness function is equal to the objective function.
+* In the tournament method, we used equal probability distribution for each gene in the selected chromosome.
 
 Crossover
 
-* As crossover methods, we have used t-point and uniform.
+> As crossover methods, we have used t-point and uniform.
 
 Mutation
 
-* As mutation methods, we have use swap, creep, and inversion.
+> As mutation methods, we have use swap, creep, and inversion.
 
 Replacement
 
-* As replacement methods, we have used steady-state, generational gap, and generational method using elitism depending on the proportion of the replaced population defined by the alpha rate, which should be initialized by the user.
+> As replacement methods, we have used steady-state, generational gap, and generational method using elitism depending on the proportion of the replaced population defined by the alpha rate, which should be initialized by the user.
 
 ⚠️ The user should initialize crossover and mutation rates. As we have used the **GA**, the crossover rate should be much higher than the mutation rate.
 
@@ -93,7 +93,7 @@ Since the total fitness function never equals zero (The minimum number of colors
 
 #### 📌 Coloring the Graph
 
-To color the graph, we have defined two **NumPy** arrays and have stored the valid chromosomes and the valid chromosomes with the minimum number of colors in each generation called `total_generations_valid_chromosomes` and `total_generations_minimum_colors_valid_chromosomes`, respectively.  Using these two arrays, we plot the colored graph based on the our coloring problem inputs' size.
+To color the graph, we have defined two **NumPy** arrays and have stored the valid chromosomes and the valid chromosomes with the minimum number of colors in each generation called `total_generations_valid_chromosomes` and `total_generations_minimum_colors_valid_chromosomes`, respectively. Using these two arrays, we plot the colored graph based on the our coloring problem inputs' size.
 
 [Draw Function](https://github.com/wildonion/colory/blob/e6e94342b2c72e49019bbc9ff3f7a22580e6eea4/_evolver/_ga.py#L774)
 
