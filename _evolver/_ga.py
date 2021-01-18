@@ -780,11 +780,12 @@ class genetic_process():
 			generation_index                     = random.sample(range(self.total_generations_valid_chromosomes.shape[0]), 1)[0]
 			selected_generation_chromosome_index = random.sample(range(self.total_generations_valid_chromosomes[generation_index].shape[0]), 1)[0]
 			selected_valid_chromosome            = self.total_generations_valid_chromosomes[generation_index][selected_generation_chromosome_index]
-			print(f"\t\t▶  Random Selected Valid Chromosome --- {selected_valid_chromosome}\n")
+			print(f"\t\t🔮  Random Selected Valid Chromosome --- {selected_valid_chromosome}")
 			colors = self.colors[selected_valid_chromosome]
 			nx.draw(self.graph, with_labels=True, node_color=colors, node_size=700, alpha=0.9)
 			plt.savefig(f"utils/results/latest-test-case/colored_graph_using_valid_chromosomes_after_{self.generations}_generations.png")
-		
+			print(f"\t\t📸  Colored Graph Saved at utils/results/latest-test-case\n")
+
 		if self.total_generations_minimum_colors_valid_chromosomes.size != 0: # we can color the graph with minimum colors cause there are some valid chromosomes
 			print(f"\t\t✅  It's Possible to Color the Graph with Less than {self.colors.shape[0]} Colors using Random Selected Valid Chromosome with Minimum Colors")
 			generation_index    = random.sample(range(self.total_generations_minimum_colors_valid_chromosomes.shape[0]), 1)[0]
@@ -797,11 +798,11 @@ class genetic_process():
 				nb_color_index    = random.sample(range(selected_generation_nb_colors_for_each_chromosome.shape[0]), 1)
 				selected_nb_color = selected_generation_nb_colors_for_each_chromosome[nb_color_index]
 			selected_minimum_colors_valid_chromosome = selected_generation[nb_color_index][0]
-			print(f"\t\t▶  Random Selected Valid Chromosome with Minimum Colors --- {selected_minimum_colors_valid_chromosome}\n")
+			print(f"\t\t🔮  Random Selected Valid Chromosome with Minimum Colors --- {selected_minimum_colors_valid_chromosome}")
 			minimum_colors = self.colors[selected_minimum_colors_valid_chromosome]
 			nx.draw(self.graph, with_labels=True, node_color=minimum_colors, node_size=700, alpha=0.9)
 			plt.savefig(f"utils/results/latest-test-case/colored_graph_using_minimum_colors_after_{self.generations}_generations.png")
-			
+			print(f"\t\t📸  Colored Graph Saved at utils/results/latest-test-case\n")
 
 	# ≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣≣
 	
