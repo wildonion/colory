@@ -93,7 +93,7 @@ Since the total fitness function never equals zero (The minimum number of colors
 
 #### 📌 Coloring the Graph
 
-To color the graph, we have defined two **NumPy** arrays and have stored the valid chromosomes and the valid chromosomes with the minimum number of colors in each generation called `total_generations_valid_chromosomes` and `total_generations_minimum_colors_valid_chromosomes`, respectively. Using these two arrays, we plot the colored graph based on the our coloring problem inputs' size.
+To color the graph, we have defined two **NumPy** arrays and have stored the valid chromosomes and the valid chromosomes with the minimum number of colors in each generation called `total_generations_valid_chromosomes` and `total_generations_minimum_colors_valid_chromosomes`, respectively. Using these two arrays, we plot the colored graph based on our coloring problem inputs' size.
 
 [Draw Function](https://github.com/wildonion/colory/blob/e6e94342b2c72e49019bbc9ff3f7a22580e6eea4/_evolver/_ga.py#L774)
 
