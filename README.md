@@ -78,7 +78,7 @@ Crossover
 
 Mutation
 
-> As mutation methods, we have use swap, creep, and inversion.
+> As mutation methods, we have used swap, creep, and inversion.
 
 Replacement
 
